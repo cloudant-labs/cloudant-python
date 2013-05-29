@@ -6,11 +6,11 @@ try:
   from local_settings import Config
 except ImportError:
   # nope; try environ
-  Config = object()
-  Config.URI = os.environ['URI']
-  Config.DB_NAME = os.environ['DB_NAME']
-  Config.AUTH = (os.environ['USER'],
-                 os.environ['PASS'])
+  class Config(object):
+    URI = os.environ['URI']
+    DB_NAME = os.environ['DB_NAME']
+    AUTH = (os.environ['USER'],
+            os.environ['PASS'])
 
 class ResourceTest(unittest.TestCase):
   def setUp(self):
