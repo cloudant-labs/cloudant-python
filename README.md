@@ -42,7 +42,7 @@ You can create databases from a connection...
     import divan
 
     conn = divan.Connection('https://...')
-    db = conn.Database('divan')
+    db = conn.database('divan')
 
 ...or from scratch:
 
@@ -56,9 +56,9 @@ Gets or creates a document or the current database, like so:
 
     db = divan.Database('https://...', 'divan')
     # creates 'divan' database
-    response = db.getOrCreate()
+    response = db.get_or_create()
     # creates 'sofamatic' documents
-    response = db.getOrCreate('sofamatic', params={...}) 
+    response = db.get_or_create('sofamatic', params={...}) 
 
 ### Documents
 
