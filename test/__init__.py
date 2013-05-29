@@ -1,18 +1,22 @@
 import app
 import unittest
 import os
-from local_settings import Config
-
-URI = os.environ.get('URI', Config.URI)
-DB_NAME = os.environ.get('DB_NAME', Config.DB_NAME)
-AUTH = (os.environ.get('USER', Config.USER), 
-        os.environ.get('PASS', Config.PASS))
+try:
+  # get config locally
+  from local_settings import Config
+except ImportError:
+  # nope; try environ
+  Config = object()
+  Config.URI = os.environ['URI']
+  Config.DB_NAME = os.environ['DB_NAME']
+  Config.AUTH = (os.environ['USER'],
+                 os.environ['PASS'])
 
 class ResourceTest(unittest.TestCase):
   def setUp(self):
-    self.uri = URI
-    self.db_name = DB_NAME
-    self.auth = AUTH
+    self.uri = Config.URI
+    self.db_name = Config.DB_NAME
+    self.auth = Config.AUTH
 
 class ConnectionTest(ResourceTest):
   def setUp(self):
