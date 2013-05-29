@@ -1,3 +1,5 @@
-.env
+local_settings.py
+*.egg
+*.egg-info
 venv
 *.pyc

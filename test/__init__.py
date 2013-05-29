@@ -1,10 +1,12 @@
 import app
 import unittest
 import os
+from local_settings import Config
 
-URI = os.environ['URI']
-DB_NAME = os.environ['DB_NAME']
-AUTH = (os.environ['USER'], os.environ['PASS'])
+URI = os.environ.get('URI', Config.URI)
+DB_NAME = os.environ.get('DB_NAME', Config.DB_NAME)
+AUTH = (os.environ.get('USER', Config.USER), 
+        os.environ.get('PASS', Config.PASS))
 
 class ResourceTest(unittest.TestCase):
   def setUp(self):

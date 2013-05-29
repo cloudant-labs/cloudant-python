@@ -8,4 +8,4 @@ env:
     - secure: "U/GsXecDfcgZHu4fg2uJdXo6HK7yG0fbQqyrZhtCCV0Z8TLn1JuoLurzr2wo\nAJUVEkriYLGrRpEQEH6Cs8KJXgz1xZQo9u/JR+hQAo+zq8P1tGNVjSBvhM0d\nW6g8m4qAnNsC9P1W/AVRv43VDRZpAo9UFKdEXSBLp24ROstb3WE="
     - secure: "bDeB9YPUy+dgfcXQQtmicNMa6CkT5b0dlzGGJ4IrBFESONemOiP2LeRZPrZP\nK4Fs6kOhm/o5WwnwxA4z7SoVVKy0W/Ho+etfClBC6r4rAnBw14hySIzD3Wj1\nf398BkX1G9MPXLXHuoSRNLTr/CvQOlUFpZuZgCyvs+tEAhf8PHo="
 script:
-  - python tests.py
+  - python setup.py test
