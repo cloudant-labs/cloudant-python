@@ -9,3 +9,5 @@ env:
     - secure: "bDeB9YPUy+dgfcXQQtmicNMa6CkT5b0dlzGGJ4IrBFESONemOiP2LeRZPrZP\nK4Fs6kOhm/o5WwnwxA4z7SoVVKy0W/Ho+etfClBC6r4rAnBw14hySIzD3Wj1\nf398BkX1G9MPXLXHuoSRNLTr/CvQOlUFpZuZgCyvs+tEAhf8PHo="
 script:
   - python setup.py test
+after_success:
+  - coveralls
