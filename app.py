@@ -102,13 +102,23 @@ class Database(Resource):
     """
     doc = self.get(docname).json()
     doc.update(change)
-    self.put(docname, params=doc)
+    return self.put(docname, params=doc)
 
-  def getOrCreate(self, doc='', **kwargs):
+  def getOrCreate(self, docname='', **kwargs):
     """
-    Get; if nothing is found, post
+    Get; if nothing is found, post (doc) or put (db)
     """
-    pass
+    remote_doc = self.get(docname).json()
+    if 'error' in doc and doc['error'] == "not_found":
+      # create a new document
+      if docname:
+        return self.post(docname, **kwargs)
+      # create a new database
+      else:
+        return self.put()
+    # return the found doc
+    else:
+      return remote_doc
 
 class Connection(Resource):
   def __init__(self, uri="http://localhost:5984", **kwargs):
