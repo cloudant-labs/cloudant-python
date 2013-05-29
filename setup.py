@@ -10,4 +10,4 @@ setup(name='Divan',
       url='https://github.com/garbados/divan',
       py_modules=['app'],
       test_suite="test"
-    )
+      )

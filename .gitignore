@@ -1,4 +1,5 @@
 local_settings.py
+pepfix.sh
 *.egg
 *.egg-info
 venv
