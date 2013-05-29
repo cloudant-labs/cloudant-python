@@ -14,15 +14,15 @@ Put on your favorite hookah, sit back on the [divan](http://en.wikipedia.org/wik
 
 First up, connect to your database:
 
-  import divan
+    import divan
 
-  conn = divan.Connection()
-  print conn.get('_all_dbs') # returns a list of your databases
+    conn = divan.Connection()
+    print conn.get('_all_dbs') # returns a list of your databases
 
 Boom. Or:
 
-  conn = divan.Connection("https://[username]:[password]@[uri]")
-  print conn.put('divan') # creates a new database called 'divan'
+    conn = divan.Connection("https://[username]:[password]@[uri]")
+    print conn.put('divan') # creates a new database called 'divan'
 
 ### REST
 
@@ -39,40 +39,40 @@ These methods return HTTP responses, a la [requests](http://docs.python-requests
 
 You can create databases from a connection...
 
-  import divan
+    import divan
 
-  conn = divan.Connection('https://...')
-  db = conn.Database('divan')
+    conn = divan.Connection('https://...')
+    db = conn.Database('divan')
 
 ...or from scratch:
 
-  import divan
+    import divan
 
-  db = divan.Database('https://...', 'divan')
+    db = divan.Database('https://...', 'divan')
 
 #### Database.getOrCreate(docname='', **kwargs)
 
 Gets or creates a document or the current database, like so:
 
-  db = divan.Database('https://...', 'divan')
-  # creates 'divan' database
-  response = db.getOrCreate()
-  # creates 'sofamatic' documents
-  response = db.getOrCreate('sofamatic', params={...}) 
+    db = divan.Database('https://...', 'divan')
+    # creates 'divan' database
+    response = db.getOrCreate()
+    # creates 'sofamatic' documents
+    response = db.getOrCreate('sofamatic', params={...}) 
 
 ### Documents
 
-Interact with documents through the database object, like this:
+Interact with documents through the `Database` object, like this:
 
-  db = divan.Database('https://...', 'divan')
-  response = db.get('sofamatic')
-  doc = response.json()
+    db = divan.Database('https://...', 'divan')
+    response = db.get('sofamatic')
+    doc = response.json()
 
 #### Database.merge(docname, change, **kwargs):
 
 Gets a document and updates it with your changes, like so:
 
-  response = db.merge('sofamatic', {'comfy': True})
+    response = db.merge('sofamatic', {'comfy': True})
 
 ### Views
 
@@ -100,4 +100,6 @@ TODO implementation, tests, docs
 
 ## Testing
 
-TODO implementation, tests, docs
+Testing uses a live database, so you'll need to configure a `local_settings.py` file or set environment variables for `URI`, `DB_NAME`, `USER`, and `PASS`. Then:
+
+    python setup.py test
