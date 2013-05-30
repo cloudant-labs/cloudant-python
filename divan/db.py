@@ -31,7 +31,8 @@ class Database(Resource):
         """
         Get; if nothing is found, post (doc) or put (db)
         """
-        doc = self.get(docname).json()
+        res = self.get(docname)
+        doc = res.json()
         if 'error' in doc and doc['error'] == "not_found":
             # create a new document
             if docname:
@@ -41,7 +42,7 @@ class Database(Resource):
                 return self.put()
         # return the found doc
         else:
-            return doc
+            return res
 
     def bulk_docs(self, docs):
         return self.post('_bulk_docs', params={'docs': docs})
