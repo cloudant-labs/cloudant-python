@@ -8,6 +8,6 @@ setup(name='Divan',
       author='Max Thayer',
       author_email='garbados@gmail.com',
       url='https://github.com/garbados/divan',
-      py_modules=['app'],
+      packages=['app'],
       test_suite="test"
       )

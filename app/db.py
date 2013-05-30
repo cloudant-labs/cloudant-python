@@ -44,4 +44,4 @@ class Database(Resource):
             return doc
 
     def bulk_docs(self, docs):
-        return self.post
+        return self.post('_bulk_docs', params={'docs': docs})

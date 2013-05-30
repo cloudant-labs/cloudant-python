@@ -4,3 +4,4 @@ pepfix.sh
 *.egg-info
 venv
 *.pyc
+build
