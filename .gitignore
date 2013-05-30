@@ -5,3 +5,4 @@ pepfix.sh
 venv
 *.pyc
 build
+dist

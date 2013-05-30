@@ -1,4 +1,4 @@
-import app
+import divan
 import unittest
 import os
 try:
@@ -25,14 +25,14 @@ class ConnectionTest(ResourceTest):
 
     def setUp(self):
         super(ConnectionTest, self).setUp()
-        self.conn = app.Connection(self.uri, auth=self.auth)
+        self.conn = divan.Connection(self.uri, auth=self.auth)
 
 
 class DatabaseTest(ResourceTest):
 
     def setUp(self):
         super(DatabaseTest, self).setUp()
-        self.db = app.Database(self.uri, self.db_name, auth=self.auth)
+        self.db = divan.Database(self.uri, self.db_name, auth=self.auth)
 
     def testGet(self):
         assert self.db.get().json()['db_name'] == self.db_name
@@ -41,7 +41,7 @@ class DatabaseTest(ResourceTest):
         """
         Create and delete a database
         """
-        db = app.Database(self.uri, "testbutt", auth=self.auth)
+        db = divan.Database(self.uri, "testbutt", auth=self.auth)
         r = db.put()
         assert r.status_code == 201
         r = db.delete()
@@ -74,7 +74,7 @@ class AttachmentTest(ResourceTest):
 
     def setUp(self):
         super(AttachmentTest, self).setUp()
-        self.attachment = app.Attachment(
+        self.attachment = divan.Attachment(
             self.uri,
             self.db_name,
             'hard vark',
@@ -88,7 +88,7 @@ class ViewTest(ResourceTest):
 
     def setUp(self):
         super(ViewTest, self).setUp()
-        self.view = app.View(
+        self.view = divan.View(
             self.uri,
             self.db_name,
             'derpview',
