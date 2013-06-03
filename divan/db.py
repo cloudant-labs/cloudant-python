@@ -25,7 +25,7 @@ class Database(Resource):
         """
         doc = self.get(docname).json()
         doc.update(change)
-        return self.put(docname, params=doc)
+        return self.put(docname, params=doc, **kwargs)
 
     def get_or_create(self, docname='', **kwargs):
         """
@@ -48,4 +48,7 @@ class Database(Resource):
         return self.post('_bulk_docs', params={'docs': docs})
 
     def all_docs(self, **kwargs):
-        return self.get('_all_docs', params=kwargs)
+        return self.get('_all_docs', **kwargs)
+
+    def changes(self, **kwargs):
+        return self.get('_changes', stream=True, **kwargs)
