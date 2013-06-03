@@ -19,7 +19,7 @@ class Database(Resource):
     def view(self, doc, **kwargs):
         return View(self.uri, self.name, doc, **kwargs)
 
-    def merge(self, docname, change, **kwargs):
+    def merge(self, docname, change):
         """
         Get document, merge changes, put updated document
         """
@@ -46,3 +46,6 @@ class Database(Resource):
 
     def bulk_docs(self, docs):
         return self.post('_bulk_docs', params={'docs': docs})
+
+    def all_docs(self, **kwargs):
+        return self.get('_all_docs', params=kwargs)
