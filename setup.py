@@ -13,5 +13,12 @@ setup(name='Divan',
       url='https://github.com/garbados/divan',
       packages=['divan'],
       install_requires=dependencies,
-      test_suite="test"
-      )
+      test_suite="test",
+      # install with `pip install -e divan[doc]`
+      extras_require = {
+            'docs': [
+                  'jinja2>=2.7',
+                  'markdown>=2.3.1'
+            ]
+      }
+)
