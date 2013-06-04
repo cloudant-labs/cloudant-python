@@ -46,7 +46,7 @@ for item_name in dir(divan):
           print "WARNING: %s.%s has no documentation!" % (item_name, method_name)
         docs[item_name][method_name] = get_docs(method)
 
-with open('reamde_template.md', 'r') as f:
+with open('readme_template.md', 'r') as f:
   template = jinja2.Template(f.read())
 
 with open('readme.md', 'w') as f:
