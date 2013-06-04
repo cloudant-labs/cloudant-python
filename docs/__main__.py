@@ -5,6 +5,7 @@ import re
 import os
 
 dirname, filename = os.path.split(os.path.abspath(__file__))
+maindir = os.path.normpath(os.path.join(dirname, '..'))
 docs = {}
 
 def is_module(item):
@@ -48,10 +49,11 @@ for item_name in dir(divan):
           print "WARNING: %s.%s has no documentation!" % (item_name, method_name)
         docs[item_name][method_name] = get_docs(method)
 
-with open('/'.join([dirname, 'readme_template.md']), 'r') as f:
+with open(os.path.join(dirname, 'readme_template.md'), 'r') as f:
   template = jinja2.Template(f.read())
 
-with open('/'.join([dirname,'readme.md']), 'w') as f:
+with open(os.path.join(maindir,'readme.md'), 'w') as f:
+  print os.path.join(maindir,'readme.md')
   f.write(template.render(**{
     'docs': docs,
     'order': [
