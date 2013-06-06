@@ -21,10 +21,10 @@ You can create objects explicitly or inherit them from objects higher in the DB 
 ## API
 {% for class in order %}
 {%- set main = docs[class]._main %}
-### {{class}}({{main.args}}{% if main.kwargs %}, **{{main.kwargs}}{% endif %})
+### {{class}}({{main.args}}{% if main.args and main.kwargs%}, {% endif %}{% if main.kwargs %}**{{main.kwargs}}{% endif %})
 {{main.docs}}
 {%- for name, method in docs[class].items() if name != '_main' %}
-#### {{class}}.{{name}}({{method.args}}{% if method.kwargs %}, **{{method.kwargs}}{% endif %})
+#### {{class}}.{{name}}({{method.args}}{% if method.args and method.kwargs%}, {% endif %}{% if method.kwargs %}**{{method.kwargs}}{% endif %})
 {{method.docs}}
 
 {%- endfor %}
