@@ -28,19 +28,34 @@ You can create objects explicitly or inherit them from objects higher in the DB 
 
 Connection to a specific database
 
-#### Database.bulk_docs(docs)
-
 #### Database.merge(docname, change, **kwargs)
 
-Get document, merge changes, put updated document
+Get document by `docname`, merge `changes`, 
+and then `PUT` the updated document back to the server
 
-#### Database.attachment(doc, **kwargs)
+#### Database.attachment(docname, **kwargs)
 
-#### Database.get_or_create(docname, **kwargs)
+Create an `Attachment` object from `docname` and the settings
+for the current database.
 
-Get; if nothing is found, post (doc) or put (db)
+#### Database.get_or_create(doc, **kwargs)
 
-#### Database.view(doc, **kwargs)
+Given a document with an _id attribute, returns it if it exists.
+
+If it doesn't, it tries to create it.
+
+If the doc is None, it tries to get or create the current database instead.
+
+#### Database.changes(, **kwargs)
+
+Gets a list of the changes made to the database. This can be used to monitor for update and modifications to the database for post processing or synchronization.
+
+Automatically adjusts the request to handle the different response behavior of polling, longpolling, and continuous modes.
+
+#### Database.view(docname, **kwargs)
+
+Create a `View` object from `docname` and the settings
+for the current database.
 
 ### View(uri, name, doc, **kwargs)
 
