@@ -1,3 +1,5 @@
+local_credentials.py
+
 *.py[cod]
 
 # C extensions
