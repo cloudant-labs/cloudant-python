@@ -1,5 +1,7 @@
 local_credentials.py
 .idea
+cloudant.py
+
 *.py[cod]
 
 # C extensions
