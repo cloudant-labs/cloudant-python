@@ -1,6 +1,8 @@
+#!/usr/bin/env python
 # coding=utf-8
 import requests
 from cloudant.database import Database
+from cloudant.errors import PermissionsError
 
 
 class Client(object):
@@ -93,6 +95,10 @@ class Client(object):
         if r.ok:
             r_json = r.json()
             return [Database(name, self) for name in r_json]
+
+        elif r.status_code == 403:
+            raise PermissionsError('No permissions to get all databases')
+
         return []
 
     def get_database_info(self, db_name):
@@ -107,6 +113,8 @@ class Client(object):
 
         if r.ok:
             return r.json()
+        elif r.status_code == 403:
+            raise PermissionsError('No permissions to view database info')
         else:
             raise KeyError('Database not found')
 
@@ -125,6 +133,9 @@ class Client(object):
         elif r.status_code == 413:
             raise KeyError('Invalid database name')
 
+        elif r.status_code == 403:
+            raise PermissionsError('No permissions to create a database')
+
     def delete_database(self, db_name):
         """
         Delete a database on this account
@@ -134,4 +145,9 @@ class Client(object):
         """
         r = self.delete('/{}'.format(db_name))
 
-        return r.ok
+        if r.ok:
+            return True
+
+        elif r.status_code == 403:
+            raise PermissionsError('No permissions to delete a database')
+

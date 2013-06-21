@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 from itertools import chain
 import json
@@ -68,7 +69,7 @@ class Database(object):
             return [Document(x) for x in r_json['rows']]
         return []
 
-    def get_document(self, id, **kwargs):
+    def get_document(self, _id, **kwargs):
         """
         Retrieve a document from the database
 
@@ -83,7 +84,7 @@ class Database(object):
 
         :return: Document retrieved from the database
         """
-        r = self.client.get('/{}/{}'.format(self.name, id), params=urlencode(kwargs))
+        r = self.client.get('/{}/{}'.format(self.name, _id), params=urlencode(kwargs))
 
         if r.status_code == 200:
             return Document(r.json())

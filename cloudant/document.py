@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 
 
@@ -19,4 +20,8 @@ class Document(object):
             init_dict = json
 
         for key, value in init_dict.items():
+            if key == '_id':
+                key = 'id'
+            if key == '_rev':
+                key = 'rev'
             setattr(self, key, value)
