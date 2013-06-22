@@ -23,3 +23,9 @@ This library provides CRUD operations on Cloudant databases and documents.
 The goal is to eventually implement the entire Cloudant API.
 
 The reference API version for this library is 1.0.2.
+
+**Installation**
+
+    pip install cloudant --use-mirrors
+
+pypi seems to be acting funny, so `--use-mirrors` may be necessary.
