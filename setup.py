@@ -10,7 +10,7 @@ except ImportError:
     from distutils.core import setup
 
 APP_NAME = 'cloudant'
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 # Publish Helper.
 if sys.argv[-1] == 'publish':
