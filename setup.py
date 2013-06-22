@@ -19,6 +19,12 @@ if sys.argv[-1] == 'publish':
 
 settings = {}
 
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+def readlines(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).readlines()
+
 settings.update(
     name=APP_NAME,
     version=VERSION,
@@ -29,7 +35,7 @@ settings.update(
     url='https://github.com/dustinmm80/cloudant',
     license='MIT',
     description='Python library to use the CloudAnt API',
-    long_description=open('README.md').read(),
+    long_description=read('README.md'),
     zip_safe=False,
     classifiers=[
         'Intended Audience :: Developers',
@@ -44,7 +50,7 @@ settings.update(
     ],
     test_suite='nose.collector',
     tests_require=['nose'],
-    install_requires=open('requirements.txt').readlines(),
+    install_requires=readlines('requirements.txt'),
 )
 
 setup(**settings)

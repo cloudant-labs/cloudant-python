@@ -1,1 +1,3 @@
-include README.md CHANGES.md CONTRIBUTORS.md LICENSE requirements.txt
+include *.txt
+include *.md
+include *.rst
