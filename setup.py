@@ -3,7 +3,7 @@
 from setuptools import setup
 
 with open('requirements.txt', 'r') as f:
-  dependencies = [line.strip() for line in f.readlines()]
+    dependencies = [line.strip() for line in f.readlines()]
 
 setup(name='Divan',
       version='0.0.3',
@@ -15,10 +15,10 @@ setup(name='Divan',
       install_requires=dependencies,
       test_suite="test",
       # install with `pip install -e divan[doc]`
-      extras_require = {
-            'docs': [
-                  'jinja2>=2.7',
-                  'markdown>=2.3.1'
-            ]
+      extras_require={
+        'docs': [
+            'jinja2>=2.7',
+            'markdown>=2.3.1'
+        ]
       }
-)
+    )

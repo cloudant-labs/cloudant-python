@@ -1,0 +1,3 @@
+# /usr/local/bin/bash
+
+autopep8 -irav app test setup.py
