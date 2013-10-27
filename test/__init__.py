@@ -28,9 +28,6 @@ class ConnectionTest(ResourceTest):
         super(ConnectionTest, self).setUp()
         self.conn = divan.Connection(self.uri)
 
-    def testInfo(self):
-        self.conn.info()
-
     def testAllDbs(self):
         self.conn.all_dbs()
 
