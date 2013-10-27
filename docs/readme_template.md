@@ -100,8 +100,6 @@ All Divan errors also inherit from `DivanException`.
     - [{{class}}.{{name}}](#{{class}}.{{name}})
 {%- endfor %}
 {%- endfor %}
-
-
 {% for class in order %}
 {%- set main = docs[class]._main %}
 <a name="{{class}}"></a>

@@ -139,8 +139,6 @@ All Divan errors also inherit from `DivanException`.
     - [Attachment.post](#Attachment.post)
     - [Attachment.put](#Attachment.put)
 
-
-
 <a name="Connection"></a>
 ### Connection(uri, **kwargs)
 
