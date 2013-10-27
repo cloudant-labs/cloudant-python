@@ -1,5 +1,5 @@
 import inspect
-import lib as divan
+import divan
 import jinja2
 import re
 import os

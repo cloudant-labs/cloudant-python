@@ -1,4 +1,4 @@
 # /usr/local/bin/bash
 
-rm *.pyc lib/*.pyc test/*.pyc docs/*.pyc
-rm -rf build dist
+rm *.pyc divan/*.pyc test/*.pyc docs/*.pyc
+rm -rf build dist Divan.egg-info

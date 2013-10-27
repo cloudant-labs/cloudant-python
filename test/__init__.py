@@ -1,4 +1,4 @@
-import lib as divan
+import divan
 import unittest
 import os
 
