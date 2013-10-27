@@ -25,6 +25,19 @@ class ConnectionTest(ResourceTest):
     def testAllDbs(self):
         self.conn.all_dbs()
 
+    def testSession(self):
+        self.conn.session()
+
+    def testActiveTasks(self):
+        self.conn.active_tasks()
+
+    def testReplicate(self):
+        self.db = self.conn.database(self.db_name)
+        self.db.put()
+        self.conn.replicate(self.db_name, self.otherdb_name, params=dict(create_target=True))
+        self.db.delete()
+        self.conn.delete(self.otherdb_name)
+
     def testCreateDb(self):
         self.conn.database(self.db_name)
         self.conn[self.db_name]
@@ -38,17 +51,19 @@ class DatabaseTest(ResourceTest):
     def setUp(self):
         super(DatabaseTest, self).setUp()
         self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db.put()
 
-    def testCrud(self):
+    def testGet(self):
         """
         Create, read, and delete a database
         """
-        self.db.put()
         self.db.get()
 
     def testAllDocs(self):
-        self.db.put()
         self.db.all_docs()
+
+    def testChanges(self):
+        self.db.changes()
 
     def tearDown(self):
         self.db.delete()
@@ -67,6 +82,17 @@ class DocumentTest(ResourceTest):
             'herp': 'derp'
             })
         self.doc.get()
+
+    def testMerge(self):
+        self.doc.put(params={
+            'herp': 'derp'
+            })
+        self.doc.merge({
+            'herp': 'Luke Skywalker'
+            })
+
+    def testAttachment(self):
+        self.doc.attachment('file')
 
     def tearDown(self):
         self.db.delete()
@@ -96,6 +122,18 @@ class ViewTest(ResourceTest):
     def tearDown(self):
         self.db.delete()
 
+class ErrorTest(ResourceTest):
+
+    def setUp(self):
+        super(ErrorTest, self).setUp()
+        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+
+    def testMissing(self):
+        try:
+            self.db.get()
+            raise Exception("Shouldn't make it this far >:(")
+        except LookupError:
+            pass
 
 if __name__ == "__main__":
     unittest.main()

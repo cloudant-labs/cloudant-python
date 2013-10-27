@@ -5,3 +5,4 @@ venv
 build
 dist
 Divan.egg-info
+.coverage

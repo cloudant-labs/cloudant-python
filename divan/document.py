@@ -19,11 +19,11 @@ class Document(Resource):
         path = '/'.join([method, function])
         return View(self._make_url(path), **kwargs)
 
-    def merge(self, docname, change, **kwargs):
+    def merge(self, change, **kwargs):
         """
-        Get document by `docname`, merge `changes`,
+        Merge `changes` into the document,
         and then `PUT` the updated document back to the server
         """
-        doc = self.get(docname).json()
+        doc = self.get().json()
         doc.update(change)
-        return self.put(docname, params=doc, **kwargs)
+        return self.put(params=doc, **kwargs)
