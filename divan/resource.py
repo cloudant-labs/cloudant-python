@@ -1,4 +1,4 @@
-import requests
+from requests_futures.sessions import FuturesSession
 import json
 from .error import validate
 
@@ -22,7 +22,7 @@ class Resource(object):
             self._session = kwargs['session']
             del kwargs['session']
         else:
-            self._session = requests.Session()
+            self._session = FuturesSession()
         
         self._set_options(**kwargs)
 
@@ -44,6 +44,9 @@ class Resource(object):
         else:
             return self.uri
 
+    def _validate(self, session, response):
+        validate(response)
+
     def _make_request(self, method, path='', **kwargs):
         kwargs.update(self.opts)
         # normalize `params` kwarg according to method
@@ -51,15 +54,14 @@ class Resource(object):
             if 'params' in kwargs:
                 kwargs['data'] = json.dumps(kwargs['params'])
                 del kwargs['params']
-        response = getattr(
+        future = getattr(
             self._session,
             method)(
                 self._make_url(
                     path),
+                background_callback=self._validate,
                 **kwargs)
-        # handle errors
-        validate(response)
-        return response
+        return future
 
     def get(self, path='', **kwargs):
         """

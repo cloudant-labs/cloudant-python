@@ -15,6 +15,22 @@ Put on your favorite hookah, sit back on the [divan][wiki], and relax.
     
 ## Usage
 
+Divan is an asynchronous wrapper around Python [Requests](http://www.python-requests.org/en/latest/) for interacting with CouchDB or Cloudant instances. Check it out:
+
+    import divan
+
+    # create a connection object
+    conn = divan.Connection()
+    # create a database object
+    db = conn.database('test')
+    # now, create the database on the server
+    future = db.put()
+    response = future.result()
+    print response.json()
+    # {'ok': True}
+
+### Philosophy
+
 Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Divan uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
 
     import divan
@@ -36,10 +52,10 @@ Divan expose raw interactions -- HTTP requests, etc. -- through special methods,
     resp = doc.put({
       '_id': 'hello_world',
       'herp': 'derp'
-      })
+      }).result()
     # delete the document
     rev = resp.json()['_rev']
-    doc.delete(params={'rev': rev})
+    doc.delete(rev).result()
     # but this also creates a document
     db['hello_world'] = {'herp': 'derp'}
 
@@ -57,9 +73,22 @@ If CouchDB has a special endpoint for something, it's in Divan as a special meth
       # and so does this!
       pass
 
-### Object Hierarchy
+### Asynchronous
 
-You can create objects explicitly or inherit them from objects higher in the DB hierarchy. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
+HTTP request methods like `get` and `post` return `Future` objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the `result` method, like so:
+
+    import divan
+
+    conn = divan.Connection()
+    db = conn['test']
+    future = db.put()
+    response = future.result()
+    print db.get().result().json()
+    # {'db_name': 'test', ...}
+
+### Option Inheritance
+
+If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
 
     import divan
 

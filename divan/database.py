@@ -21,7 +21,7 @@ class Database(Resource):
 
     def __setitem__(self, name, doc):
         """Creates `doc` with an ID of `name`."""
-        self.put(name, params=doc)
+        self.put(name, params=doc).result()
 
     def all_docs(self, **kwargs):
         """Return an iterator over all documents in the database."""

@@ -42,11 +42,13 @@ class ConnectionTest(ResourceTest):
 
     def testReplicate(self):
         self.db = self.conn.database(self.db_name)
-        self.db.put()
-        self.conn.replicate(self.db_name, self.otherdb_name, params=dict(
-            create_target=True))
-        self.db.delete()
-        self.conn.delete(self.otherdb_name)
+        self.db.put().result()
+
+        params = dict(create_target=True)
+        self.conn.replicate(self.db_name, self.otherdb_name, params=params).result()
+        
+        delete_futures = [self.db.delete(), self.conn.delete(self.otherdb_name)]
+        map(lambda future: future.result(), delete_futures)
 
     def testCreateDb(self):
         self.conn.database(self.db_name)
@@ -61,13 +63,14 @@ class DatabaseTest(ResourceTest):
     def setUp(self):
         super(DatabaseTest, self).setUp()
         self.db = divan.Database('/'.join([self.uri, self.db_name]))
-        self.db.put()
+        self.db.put().result()
+
 
     def testGet(self):
-        self.db.get()
+        self.db.get().result()
 
     def testBulk(self):
-        self.db.save_docs(self.test_doc, self.test_otherdoc)
+        self.db.save_docs(self.test_doc, self.test_otherdoc).result()
 
     def testIter(self):
         self.db.save_docs(self.test_doc, self.test_otherdoc)
@@ -78,16 +81,16 @@ class DatabaseTest(ResourceTest):
         self.db.all_docs()
 
     def testChanges(self):
-        self.db.changes()
+        self.db.changes().result()
         self.db.changes(params={
             'feed': 'continuous'
-        })
+        }).result()
 
     def testViewCleanup(self):
-        self.db.view_cleanup()
+        self.db.view_cleanup().result()
 
     def tearDown(self):
-        self.db.delete()
+        self.db.delete().result()
 
 
 class DocumentTest(ResourceTest):
@@ -95,22 +98,22 @@ class DocumentTest(ResourceTest):
     def setUp(self):
         super(DocumentTest, self).setUp()
         self.db = divan.Database('/'.join([self.uri, self.db_name]))
-        self.db.put()
+        self.db.put().result()
         self.doc = self.db.document(self.doc_name)
 
     def testCrud(self):
-        self.doc.put(params=self.test_doc)
-        resp = self.doc.get()
+        self.doc.put(params=self.test_doc).result()
+        resp = self.doc.get().result()
         rev = resp.json()['_rev']
-        self.doc.delete(rev)
+        self.doc.delete(rev).result()
 
     def testDict(self):
         self.db[self.doc_name] = self.test_doc
         self.db[self.doc_name]
 
     def testMerge(self):
-        self.doc.put(params=self.test_doc)
-        self.doc.merge(self.test_otherdoc)
+        self.doc.put(params=self.test_doc).result()
+        self.doc.merge(self.test_otherdoc).result()
 
     def testView(self):
         self.doc.view('_view', 'derp')
@@ -119,7 +122,7 @@ class DocumentTest(ResourceTest):
         self.doc.attachment('file')
 
     def tearDown(self):
-        self.db.delete()
+        self.db.delete().result()
 
 
 class AttachmentTest(ResourceTest):
@@ -131,7 +134,7 @@ class ViewTest(ResourceTest):
     def setUp(self):
         super(ViewTest, self).setUp()
         self.db = divan.Database('/'.join([self.uri, self.db_name]))
-        self.db.put()
+        self.db.put().result()
         self.doc = self.db.document(self.doc_name)
 
     def testPrimaryIndex(self):
@@ -144,7 +147,7 @@ class ViewTest(ResourceTest):
             pass
 
     def tearDown(self):
-        self.db.delete()
+        self.db.delete().result()
 
 
 class ErrorTest(ResourceTest):
@@ -155,7 +158,7 @@ class ErrorTest(ResourceTest):
 
     def testMissing(self):
         try:
-            self.db.get()
+            self.db.get().result()
             raise Exception("Shouldn't make it this far >:(")
         except LookupError:
             pass
