@@ -3,6 +3,7 @@ import divan
 import jinja2
 import re
 import os
+from collections import OrderedDict
 
 dirname, filename = os.path.split(os.path.abspath(__file__))
 maindir = os.path.normpath(os.path.join(dirname, '..'))
@@ -47,9 +48,11 @@ def get_args(method):
 for item_name in dir(divan):
     item = getattr(divan, item_name)
     if not (is_module(item) or is_private(item_name)):
-        docs[item_name] = {}
+        docs[item_name] = OrderedDict()
         docs[item_name]['_main'] = get_docs(item)
-        for method_name in dir(item):
+        if 'docs' not in docs[item_name]['_main'].keys():
+            print "WARNING: %s.__init__ has no documentation!" % (item_name)
+        for method_name in sorted(dir(item)):
             method = getattr(item, method_name)
             if is_function(method) and not is_private(method_name):
                 if not method.__doc__:

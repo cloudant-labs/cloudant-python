@@ -97,60 +97,39 @@ All Divan errors also inherit from `DivanException`.
 
 ### Connection(uri, **kwargs)
 
-#### Connection.info(**kwargs)
+#### Connection.active_tasks(**kwargs)
 
-Return information about your CouchDB / Cloudant instance.
+List replication, compaction, and indexer tasks currently running.
 
 #### Connection.all_dbs(**kwargs)
 
 List all databases.
+
+#### Connection.database(name, **kwargs)
+
+Create a `Database` object prefixed with this connection's URL.
+
+#### Connection.delete(path, **kwargs)
+
+Make a DELETE request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
 
 #### Connection.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
-#### Connection.database(name, **kwargs)
+#### Connection.info(**kwargs)
 
-Create a `Database` object prefixed with this connection's URL.
-
-#### Connection.uuids(count, **kwargs)
-
-Generate an arbitrary number of UUIDs.
-
-#### Connection.session(**kwargs)
-
-Get current user's authentication and authorization status.
-
-#### Connection.logout(**kwargs)
-
-De-authenticate the connection's cookie.
-
-#### Connection.replicate(source, target, opts, **kwargs)
-
-Begin a replication job.
-`opts` contains replication options such as whether the replication
-should create the target (`create_target`) or whether the replication
-is continuous (`continuous`).
-
-Note: unless continuous, will not return until the job is finished.
-
-#### Connection.put(path, **kwargs)
-
-Make a PUT request against the object's URI joined
-with `path`.
-
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
-
-#### Connection.active_tasks(**kwargs)
-
-List replication, compaction, and indexer tasks currently running.
+Return information about your CouchDB / Cloudant instance.
 
 #### Connection.login(username, password, **kwargs)
 
 Authenticate the connection via cookie.
+
+#### Connection.logout(**kwargs)
+
+De-authenticate the connection's cookie.
 
 #### Connection.post(path, **kwargs)
 
@@ -161,35 +140,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
-#### Connection.delete(path, **kwargs)
-
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
-### Database(uri, **kwargs)
-
-Connection to a specific database
-
-#### Database.all_docs(**kwargs)
-
-Return an iterator over all documents in the database.
-
-#### Database.get(path, **kwargs)
-
-Make a GET request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
-#### Database.view_cleanup(**kwargs)
-
-#### Database.revs_diff(revs, **kwargs)
-
-#### Database.save_docs(docs, **kwargs)
-
-Save many docs, all at once.
-
-#### Database.missing_revs(revs, **kwargs)
-
-#### Database.put(path, **kwargs)
+#### Connection.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
 with `path`.
@@ -198,18 +149,30 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
-#### Database.post(path, **kwargs)
+#### Connection.replicate(source, target, opts, **kwargs)
 
-Make a POST request against the object's URI joined
-with `path`.
+Begin a replication job.
+`opts` contains replication options such as whether the replication
+should create the target (`create_target`) or whether the replication
+is continuous (`continuous`).
 
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
+Note: unless continuous, will not return until the job is finished.
 
-#### Database.document(name, **kwargs)
+#### Connection.session(**kwargs)
 
-Create a `Document` object from `name`.
+Get current user's authentication and authorization status.
+
+#### Connection.uuids(count, **kwargs)
+
+Generate an arbitrary number of UUIDs.
+
+### Database(uri, **kwargs)
+
+Connection to a specific database
+
+#### Database.all_docs(**kwargs)
+
+Return an iterator over all documents in the database.
 
 #### Database.changes(**kwargs)
 
@@ -222,7 +185,54 @@ Automatically adjusts the request to handle the different response behavior of p
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+#### Database.document(name, **kwargs)
+
+Create a `Document` object from `name`.
+
+#### Database.get(path, **kwargs)
+
+Make a GET request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
+
+#### Database.missing_revs(revs, **kwargs)
+
+#### Database.post(path, **kwargs)
+
+Make a POST request against the object's URI joined
+with `path`.
+
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
+
+#### Database.put(path, **kwargs)
+
+Make a PUT request against the object's URI joined
+with `path`.
+
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
+
+#### Database.revs_diff(revs, **kwargs)
+
+#### Database.save_docs(docs, **kwargs)
+
+Save many docs, all at once.
+
+#### Database.view_cleanup(**kwargs)
+
 ### Document(uri, **kwargs)
+
+#### Document.attachment(name, **kwargs)
+
+Create an `Attachment` object from `name` and the settings
+for the current database.
+
+#### Document.delete(path, **kwargs)
+
+Make a DELETE request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
 
 #### Document.get(path, **kwargs)
 
@@ -234,10 +244,14 @@ with `path`. `kwargs` are passed directly to Requests.
 Get document by `docname`, merge `changes`,
 and then `PUT` the updated document back to the server
 
-#### Document.attachment(name, **kwargs)
+#### Document.post(path, **kwargs)
 
-Create an `Attachment` object from `name` and the settings
-for the current database.
+Make a POST request against the object's URI joined
+with `path`.
+
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
 
 #### Document.put(path, **kwargs)
 
@@ -248,36 +262,23 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
-#### Document.post(path, **kwargs)
-
-Make a POST request against the object's URI joined
-with `path`.
-
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
-
 #### Document.view(method, function, **kwargs)
 
 Create a `View` object by joining `method` and `function`.
-
-#### Document.delete(path, **kwargs)
-
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
 
 ### View(uri, **kwargs)
 
 Methods for design documents
 
-#### View.put(path, **kwargs)
+#### View.delete(path, **kwargs)
 
-Make a PUT request against the object's URI joined
-with `path`.
+Make a DELETE request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
 
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
+#### View.get(path, **kwargs)
+
+Make a GET request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
 
 #### View.post(path, **kwargs)
 
@@ -288,21 +289,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
-#### View.get(path, **kwargs)
-
-Make a GET request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
-#### View.delete(path, **kwargs)
-
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
-### Attachment(uri, **kwargs)
-
-Attachment methods for a single document
-
-#### Attachment.put(path, **kwargs)
+#### View.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
 with `path`.
@@ -310,6 +297,20 @@ with `path`.
 `kwargs['params']` are turned into JSON before being
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
+
+### Attachment(uri, **kwargs)
+
+Attachment methods for a single document
+
+#### Attachment.delete(path, **kwargs)
+
+Make a DELETE request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
+
+#### Attachment.get(path, **kwargs)
+
+Make a GET request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
 
 #### Attachment.post(path, **kwargs)
 
@@ -320,15 +321,14 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
-#### Attachment.get(path, **kwargs)
+#### Attachment.put(path, **kwargs)
 
-Make a GET request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
+Make a PUT request against the object's URI joined
+with `path`.
 
-#### Attachment.delete(path, **kwargs)
-
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
 
 
 ## Testing
