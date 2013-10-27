@@ -15,10 +15,6 @@ class Connection(Resource):
         """Shortcut to `Connection.database`."""
         return self.database(name)
 
-    def __setitem__(self, name):
-        """Creates a database called `name`."""
-        self.put(name)
-
     def info(self, **kwargs):
         """Return information about your CouchDB / Cloudant instance."""
         return self.get(**kwargs)

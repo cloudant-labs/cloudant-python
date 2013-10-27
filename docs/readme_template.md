@@ -1,5 +1,8 @@
 # Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan)
 
+[wiki]: http://en.wikipedia.org/wiki/Divan_(furniture\)
+[wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
+
 An effortless Cloudant interface for Python.
 
 Put on your favorite hookah, sit back on the [divan][wiki], and relax.
@@ -40,5 +43,14 @@ Testing uses a live database, so you'll need to configure a `local_settings.py` 
 
     python setup.py test
 
-[wiki]: http://en.wikipedia.org/wiki/Divan_(furniture\)
-[wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
+## Documentation
+
+The API reference is automatically generated from the docstrings of each class and its methods. To install Divan with the necessary extensions to build the docs, do this:
+
+    pip install -e divan[docs]
+
+Then, in Divan's root directory, do this:
+  
+    python docs
+
+Note: docstrings are in [Markdown](http://daringfireball.net/projects/markdown/).

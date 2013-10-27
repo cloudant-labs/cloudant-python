@@ -45,3 +45,10 @@ ERROR_CODES = {
     405: MethodNotAllowedError,
     409: ConflictError
 }
+
+def validate(response):
+    if response.status_code not in HTTP_SUCCESS_RANGE:
+        if response.status_code in ERROR_CODES.keys():
+            raise ERROR_CODES[response.status_code](response)
+        else:
+            raise DivanException(response)

@@ -1,6 +1,6 @@
 import requests
 import json
-import .error as errors
+from .error import validate
 
 
 class Resource(object):
@@ -52,11 +52,7 @@ class Resource(object):
                         path),
                     **kwargs)
             # handle errors
-            if response.status_code not in errors.HTTP_SUCCESS_RANGE:
-                if response.status_code in errors.ERROR_CODES.keys():
-                    raise errors.ERROR_CODES[response.status_code](response)
-                else:
-                    raise errors.DivanException(response)
+            validate(response)
             # handle cookies
             if response.cookies:
                 self._set_options(cookies=response.cookies)

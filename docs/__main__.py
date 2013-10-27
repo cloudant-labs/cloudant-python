@@ -59,7 +59,9 @@ with open(os.path.join(maindir,'readme.md'), 'w') as f:
     'order': [
       'Connection', 
       'Database',
+      'Document',
       'View',
-      'Attachment'
+      'Attachment',
+      'Error'
     ]
   }))
