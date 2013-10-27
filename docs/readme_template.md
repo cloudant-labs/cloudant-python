@@ -39,7 +39,7 @@ You can create objects explicitly or inherit them from objects higher in the DB 
 
 ## Testing
 
-Testing uses a live database, so you'll need to configure a `local_settings.py` file or set environment variables for `URI`, `DB_NAME`, `USER`, and `PASS`. Then:
+To run Divan's tests, just do:
 
     python setup.py test
 

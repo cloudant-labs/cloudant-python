@@ -60,7 +60,6 @@ with open(os.path.join(dirname, 'readme_template.md'), 'r') as f:
     template = jinja2.Template(f.read())
 
 with open(os.path.join(maindir,'readme.md'), 'w') as f:
-    print os.path.join(maindir,'readme.md')
     f.write(template.render(**{
         'docs': docs,
         'order': [
