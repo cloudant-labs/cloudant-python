@@ -59,7 +59,7 @@ If CouchDB has a special endpoint for something, it's in Divan as a special meth
 
 ### Object Hierarchy
 
-You can create objects explicitly or inherit them from objects higher in the DB hierarchy. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit settings from the `Connection` object. For example:
+You can create objects explicitly or inherit them from objects higher in the DB hierarchy. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
 
     import divan
 
