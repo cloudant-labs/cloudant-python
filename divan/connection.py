@@ -9,7 +9,7 @@ class Connection(Resource):
 
     def database(self, name, **kwargs):
         """Create a `Database` object prefixed with this connection's URL."""
-        return Database(self._make_url(name), **kwargs)
+        return Database(self._make_url(name), session=self._session, **kwargs)
 
     def __getitem__(self, name):
         """Shortcut to `Connection.database`."""

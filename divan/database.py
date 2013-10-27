@@ -13,7 +13,7 @@ class Database(Resource):
         """
         Create a `Document` object from `name`.
         """
-        return Document(self._make_url(name), **kwargs)
+        return Document(self._make_url(name), session=self._session, **kwargs)
 
     def __getitem__(self, name):
         """Shortcut to `Database.document`."""
@@ -25,7 +25,7 @@ class Database(Resource):
 
     def all_docs(self, **kwargs):
         """Return an iterator over all documents in the database."""
-        return View(self._make_url('_all_docs'), **kwargs)
+        return View(self._make_url('_all_docs'), session=self._session, **kwargs)
 
     def __iter__(self):
         """Formats `Database.all_docs` for use as an iterator."""

@@ -17,6 +17,13 @@ class Resource(object):
     """
     def __init__(self, uri, **kwargs):
         self.uri = uri
+
+        if 'session' in kwargs.keys():
+            self._session = kwargs['session']
+            del kwargs['session']
+        else:
+            self._session = requests.Session()
+        
         self._set_options(**kwargs)
 
     def _set_options(self, **kwargs):
@@ -45,16 +52,13 @@ class Resource(object):
                 kwargs['data'] = json.dumps(kwargs['params'])
                 del kwargs['params']
         response = getattr(
-            requests,
+            self._session,
             method)(
                 self._make_url(
                     path),
                 **kwargs)
         # handle errors
         validate(response)
-        # handle cookies
-        if response.cookies:
-            self._set_options(cookies=response.cookies)
         return response
 
     def get(self, path='', **kwargs):
