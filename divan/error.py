@@ -11,7 +11,7 @@ class DivanException(Exception):
         self.response = response
 
     def __str__(self):
-        return repr(self.response.status_code)
+        return repr(self.response.status_code, self.response.json())
 
 
 class NotFoundError(DivanException, LookupError):
@@ -37,13 +37,17 @@ class MethodNotAllowedError(DivanException, AttributeError):
 class ConflictError(DivanException, AssertionError):
     pass
 
+class PreconditionError(DivanException, AssertionError):
+    pass
+
 ERROR_CODES = {
     400: BadRequestError,
     401: UnauthorizedError,
     402: ForbiddenError,
     404: NotFoundError,
     405: MethodNotAllowedError,
-    409: ConflictError
+    409: ConflictError,
+    412: PreconditionError
 }
 
 def validate(response):
