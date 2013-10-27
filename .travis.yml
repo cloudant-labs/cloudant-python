@@ -1,12 +1,8 @@
 language: python
 python: 
   - "2.7"
-env:
-  global:
-    - secure: "n1t7aJ9hn70IYzxmlJ1XA8bPwPpc7xU76BYgXKhCdAabkI+E1LXnJVxTeIIK\n4SYFWEVqfOBepNAgdWeOS5eIYP31d4vTbbvTco9yuixZOhD+dbp0y1zz4lUy\nxmST3fLDJamSwRY5HL+cdFSPKEf3sGhQxM/QvtGUTPRV7Nw+XVk="
-    - secure: "m1WNUDWdrIchTaCWF9R9/s3eSGIJUxuAD2mBoBcGC4PYDGVL92Dfk8S/Mot6\nHBNG7018O90Of3PyeyXRSWD08aH1M2n3zLrFoz2/qLXcqqP9QABe/k7D5T47\nKfJv5DFz7dTJ07dAbjqzMPRoBjPVvQ12mgXr+ChlqLj+AEFiKeE="
-    - secure: "U/GsXecDfcgZHu4fg2uJdXo6HK7yG0fbQqyrZhtCCV0Z8TLn1JuoLurzr2wo\nAJUVEkriYLGrRpEQEH6Cs8KJXgz1xZQo9u/JR+hQAo+zq8P1tGNVjSBvhM0d\nW6g8m4qAnNsC9P1W/AVRv43VDRZpAo9UFKdEXSBLp24ROstb3WE="
-    - secure: "bDeB9YPUy+dgfcXQQtmicNMa6CkT5b0dlzGGJ4IrBFESONemOiP2LeRZPrZP\nK4Fs6kOhm/o5WwnwxA4z7SoVVKy0W/Ho+etfClBC6r4rAnBw14hySIzD3Wj1\nf398BkX1G9MPXLXHuoSRNLTr/CvQOlUFpZuZgCyvs+tEAhf8PHo="
+services:
+  - couchdb
 script:
   - python setup.py test
 after_success:
