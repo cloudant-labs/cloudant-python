@@ -348,3 +348,7 @@ Then, in Divan's root directory, do this:
     python docs
 
 Note: docstrings are in [Markdown](http://daringfireball.net/projects/markdown/).
+
+## License
+
+[MIT](http://opensource.org/licenses/MIT), yo.
