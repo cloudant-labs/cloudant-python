@@ -33,12 +33,13 @@ Divan expose raw interactions -- HTTP requests, etc. -- through special methods,
     db = conn.database('test')
     doc = db.document('test_doc')
     # create the document
-    doc.put({
+    resp = doc.put({
       '_id': 'hello_world',
       'herp': 'derp'
       })
     # delete the document
-    doc.delete()
+    rev = resp.json()['_rev']
+    doc.delete(params={'rev': rev})
     # but this also creates a document
     db['hello_world'] = {'herp': 'derp'}
 

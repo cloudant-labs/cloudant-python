@@ -100,7 +100,9 @@ class DocumentTest(ResourceTest):
 
     def testCrud(self):
         self.doc.put(params=self.test_doc)
-        self.doc.get()
+        resp = self.doc.get()
+        rev = resp.json()['_rev']
+        self.doc.delete(rev)
 
     def testDict(self):
         self.db[self.doc_name] = self.test_doc

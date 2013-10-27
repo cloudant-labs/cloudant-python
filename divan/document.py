@@ -27,3 +27,9 @@ class Document(Resource):
         doc = self.get().json()
         doc.update(change)
         return self.put(params=doc, **kwargs)
+
+    def delete(self, rev, **kwargs):
+        """
+        Delete the given revision of the current document.
+        """
+        return super(Document, self).delete(params={'rev': rev}, **kwargs)
