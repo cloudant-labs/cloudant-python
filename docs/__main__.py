@@ -63,7 +63,6 @@ with open(os.path.join(maindir,'readme.md'), 'w') as f:
     f.write(template.render(**{
         'docs': docs,
         'order': [
-            'Resource',
             'Connection', 
             'Database',
             'Document',

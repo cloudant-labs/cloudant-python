@@ -16,11 +16,11 @@ class Database(Resource):
         return Document(self._make_url(name), **kwargs)
 
     def __getitem__(self, name):
-        """Shortcut to `Connection.database`."""
+        """Shortcut to `Database.document`."""
         return self.document(name)
 
     def __setitem__(self, name, doc):
-        """Creates a database called `name`."""
+        """Creates `doc` with an ID of `name`."""
         self.put(name, params=doc)
 
     def all_docs(self, **kwargs):

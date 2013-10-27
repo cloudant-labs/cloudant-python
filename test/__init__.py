@@ -46,13 +46,56 @@ class DatabaseTest(ResourceTest):
         self.db.put()
         self.db.get()
 
+    def testAllDocs(self):
+        self.db.put()
+        self.db.all_docs()
+
     def tearDown(self):
         self.db.delete()
 
 
-class DocumentTest(ResourceTest): pass
+class DocumentTest(ResourceTest):
+
+    def setUp(self):
+        super(DocumentTest, self).setUp()
+        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db.put()
+        self.doc = self.db.document(self.doc_name)
+
+    def testCrud(self):
+        self.doc.put(params={
+            'herp': 'derp'
+            })
+        self.doc.get()
+
+    def tearDown(self):
+        self.db.delete()
+
+
 class AttachmentTest(ResourceTest): pass
-class ViewTest(ResourceTest): pass
+
+
+class ViewTest(ResourceTest):
+
+    def setUp(self):
+        super(ViewTest, self).setUp()
+        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db.put()
+        self.doc = self.db.document(self.doc_name)
+
+    def testPrimaryIndex(self):
+        """
+        Show that views can be used as iterators
+        """
+        self.doc.put(params={
+            'herp': 'derp'
+            })
+        for derp in self.db.all_docs():
+            pass
+
+    def tearDown(self):
+        self.db.delete()
+
 
 if __name__ == "__main__":
     unittest.main()

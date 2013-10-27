@@ -25,45 +25,6 @@ You can create objects explicitly or inherit them from objects higher in the DB 
 
 ## API
 
-### Resource(uri, **kwargs)
-
-REST resource class: implements GET, POST, PUT, DELETE methods
-for all other Divan objects, and manages settings inheritance.
-
-If you create an object, like a `Connection`, then use that to
-create a `Database` object, the `Database` will inherit any options
-from the `Connection` object, like 
-
-Implements CRUD operations for all other Divan objects.
-
-#### Resource.put(path, **kwargs)
-
-Make a PUT request against the object's URI joined
-with `path`.
-
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
-
-#### Resource.post(path, **kwargs)
-
-Make a POST request against the object's URI joined
-with `path`.
-
-`kwargs['params']` are turned into JSON before being
-passed to Requests. If you want to indicate the message
-body without it being modified, use `kwargs['data']`.
-
-#### Resource.get(path, **kwargs)
-
-Make a GET request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
-#### Resource.delete(path, **kwargs)
-
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
-
 ### Connection(uri, **kwargs)
 
 #### Connection.info(**kwargs)

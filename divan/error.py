@@ -11,7 +11,7 @@ class DivanException(Exception):
         self.response = response
 
     def __str__(self):
-        return repr(self.response.status_code, self.response.json())
+        return repr(self.response.status_code) + ": " + repr(self.response.json())
 
 
 class NotFoundError(DivanException, LookupError):
