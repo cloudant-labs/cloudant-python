@@ -1,9 +1,9 @@
-# Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan)
+# Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan) [![PyPi version](https://pypip.in/v/Divan/badge.png)](https://crate.io/packages/Divan/) [![PyPi downloads](https://pypip.in/d/Divan/badge.png)](https://crate.io/packages/Divan/)
 
 [wiki]: http://en.wikipedia.org/wiki/Divan_(furniture\)
 [wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
 
-An effortless Cloudant interface for Python.
+An effortless Cloudant / CouchDB interface for Python.
 
 Put on your favorite hookah, sit back on the [divan][wiki], and relax.
 
@@ -85,6 +85,8 @@ HTTP request methods like `get` and `post` return `Future` objects, which repres
     response = future.result()
     print db.get().result().json()
     # {'db_name': 'test', ...}
+
+As a result, any methods which must make an HTTP request return a `Future`.
 
 ### Option Inheritance
 

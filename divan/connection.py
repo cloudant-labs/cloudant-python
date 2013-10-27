@@ -3,21 +3,27 @@ from .database import Database
 
 
 class Connection(Resource):
+    
+    """
+    A connection to a Cloudant or CouchDB instance.
+
+        connection = divan.Connection()
+        connection.login(USERNAME, PASSWORD).result()
+        print connection.get().result().json()
+        # {"couchdb": "Welcome", ...}
+    """
 
     def __init__(self, uri="http://localhost:5984", **kwargs):
         super(Connection, self).__init__(uri, **kwargs)
 
     def database(self, name, **kwargs):
         """Create a `Database` object prefixed with this connection's URL."""
-        return Database(self._make_url(name), session=self._session, **kwargs)
+        opts = dict(self.opts.items() + kwargs.items())
+        return Database(self._make_url(name), session=self._session, **opts)
 
     def __getitem__(self, name):
         """Shortcut to `Connection.database`."""
-        return self.database(name)
-
-    def info(self, **kwargs):
-        """Return information about your CouchDB / Cloudant instance."""
-        return self.get(**kwargs)
+        return self.database(name, **self.opts)
 
     def all_dbs(self, **kwargs):
         """List all databases."""

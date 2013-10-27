@@ -1,9 +1,9 @@
-# Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan)
+# Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan) [![PyPi version](https://pypip.in/v/Divan/badge.png)](https://crate.io/packages/Divan/) [![PyPi downloads](https://pypip.in/d/Divan/badge.png)](https://crate.io/packages/Divan/)
 
 [wiki]: http://en.wikipedia.org/wiki/Divan_(furniture\)
 [wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
 
-An effortless Cloudant interface for Python.
+An effortless Cloudant / CouchDB interface for Python.
 
 Put on your favorite hookah, sit back on the [divan][wiki], and relax.
 
@@ -86,6 +86,8 @@ HTTP request methods like `get` and `post` return `Future` objects, which repres
     print db.get().result().json()
     # {'db_name': 'test', ...}
 
+As a result, any methods which must make an HTTP request return a `Future`.
+
 ### Option Inheritance
 
 If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
@@ -130,7 +132,6 @@ All Divan errors also inherit from `DivanException`.
     - [Connection.database](#Connection.database)
     - [Connection.delete](#Connection.delete)
     - [Connection.get](#Connection.get)
-    - [Connection.info](#Connection.info)
     - [Connection.login](#Connection.login)
     - [Connection.logout](#Connection.logout)
     - [Connection.post](#Connection.post)
@@ -172,6 +173,13 @@ All Divan errors also inherit from `DivanException`.
 <a name="Connection"></a>
 ### Connection(uri, **kwargs)
 
+A connection to a Cloudant or CouchDB instance.
+
+    connection = divan.Connection()
+    connection.login(USERNAME, PASSWORD).result()
+    print connection.get().result().json()
+    # {"couchdb": "Welcome", ...}
+
 <a name="Connection.active_tasks"></a>
 #### Connection.active_tasks(**kwargs)
 
@@ -198,11 +206,6 @@ with `path`. `kwargs` are passed directly to Requests.
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
-
-<a name="Connection.info"></a>
-#### Connection.info(**kwargs)
-
-Return information about your CouchDB / Cloudant instance.
 
 <a name="Connection.login"></a>
 #### Connection.login(username, password, **kwargs)
@@ -315,7 +318,7 @@ body without it being modified, use `kwargs['data']`.
 #### Database.revs_diff(revs, **kwargs)
 
 <a name="Database.save_docs"></a>
-#### Database.save_docs(docs, **kwargs)
+#### Database.save_docs(**kwargs)
 
 Save many docs, all at once.
 
@@ -332,10 +335,9 @@ Create an `Attachment` object from `name` and the settings
 for the current database.
 
 <a name="Document.delete"></a>
-#### Document.delete(path, **kwargs)
+#### Document.delete(rev, **kwargs)
 
-Make a DELETE request against the object's URI joined
-with `path`. `kwargs` are passed directly to Requests.
+Delete the given revision of the current document.
 
 <a name="Document.get"></a>
 #### Document.get(path, **kwargs)
@@ -344,9 +346,9 @@ Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
 <a name="Document.merge"></a>
-#### Document.merge(docname, change, **kwargs)
+#### Document.merge(change, **kwargs)
 
-Get document by `docname`, merge `changes`,
+Merge `changes` into the document,
 and then `PUT` the updated document back to the server
 
 <a name="Document.post"></a>

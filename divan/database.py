@@ -13,11 +13,12 @@ class Database(Resource):
         """
         Create a `Document` object from `name`.
         """
-        return Document(self._make_url(name), session=self._session, **kwargs)
+        opts = dict(self.opts.items() + kwargs.items())
+        return Document(self._make_url(name), session=self._session, **opts)
 
     def __getitem__(self, name):
         """Shortcut to `Database.document`."""
-        return self.document(name)
+        return self.document(name, **self.opts)
 
     def __setitem__(self, name, doc):
         """Creates `doc` with an ID of `name`."""

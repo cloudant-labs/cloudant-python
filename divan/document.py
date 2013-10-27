@@ -10,14 +10,16 @@ class Document(Resource):
         Create an `Attachment` object from `name` and the settings
         for the current database.
         """
-        return Attachment(self._make_url(name), session=self._session, **kwargs)
+        opts = dict(self.opts.items() + kwargs.items())
+        return Attachment(self._make_url(name), session=self._session, **opts)
 
     def view(self, method, function, **kwargs):
         """
         Create a `View` object by joining `method` and `function`.
         """
+        opts = dict(self.opts.items() + kwargs.items())
         path = '/'.join([method, function])
-        return View(self._make_url(path), session=self._session, **kwargs)
+        return View(self._make_url(path), session=self._session, **opts)
 
     def merge(self, change, **kwargs):
         """

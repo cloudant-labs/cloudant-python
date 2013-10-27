@@ -45,9 +45,11 @@ class ConnectionTest(ResourceTest):
         self.db.put().result()
 
         params = dict(create_target=True)
-        self.conn.replicate(self.db_name, self.otherdb_name, params=params).result()
-        
-        delete_futures = [self.db.delete(), self.conn.delete(self.otherdb_name)]
+        self.conn.replicate(
+            self.db_name, self.otherdb_name, params=params).result()
+
+        delete_futures = [self.db.delete(), self.conn.delete(
+            self.otherdb_name)]
         map(lambda future: future.result(), delete_futures)
 
     def testCreateDb(self):
@@ -64,7 +66,6 @@ class DatabaseTest(ResourceTest):
         super(DatabaseTest, self).setUp()
         self.db = divan.Database('/'.join([self.uri, self.db_name]))
         self.db.put().result()
-
 
     def testGet(self):
         self.db.get().result()
