@@ -43,7 +43,8 @@ class ConnectionTest(ResourceTest):
     def testReplicate(self):
         self.db = self.conn.database(self.db_name)
         self.db.put()
-        self.conn.replicate(self.db_name, self.otherdb_name, params=dict(create_target=True))
+        self.conn.replicate(self.db_name, self.otherdb_name, params=dict(
+            create_target=True))
         self.db.delete()
         self.conn.delete(self.otherdb_name)
 
@@ -80,7 +81,7 @@ class DatabaseTest(ResourceTest):
         self.db.changes()
         self.db.changes(params={
             'feed': 'continuous'
-            })
+        })
 
     def testViewCleanup(self):
         self.db.view_cleanup()
@@ -119,7 +120,8 @@ class DocumentTest(ResourceTest):
         self.db.delete()
 
 
-class AttachmentTest(ResourceTest): pass
+class AttachmentTest(ResourceTest):
+    pass
 
 
 class ViewTest(ResourceTest):
@@ -141,6 +143,7 @@ class ViewTest(ResourceTest):
 
     def tearDown(self):
         self.db.delete()
+
 
 class ErrorTest(ResourceTest):
 
