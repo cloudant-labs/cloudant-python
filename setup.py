@@ -16,9 +16,9 @@ setup(name='Divan',
       test_suite="test",
       # install with `pip install -e divan[doc]`
       extras_require={
-        'docs': [
-            'jinja2>=2.7',
-            'markdown>=2.3.1'
-        ]
+      'docs': [
+          'jinja2>=2.7',
+          'markdown>=2.3.1'
+      ]
       }
-    )
+      )

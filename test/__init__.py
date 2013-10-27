@@ -1,16 +1,6 @@
 import divan
 import unittest
 import os
-try:
-    # get config locally
-    from local_settings import Config
-except ImportError:
-    # nope; try environ
-    class Config(object):
-        URI = os.environ['URI']
-        DB_NAME = os.environ['DB_NAME']
-        AUTH = (os.environ['USER'],
-                os.environ['PASS'])
 
 
 class ResourceTest(unittest.TestCase):
