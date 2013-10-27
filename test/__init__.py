@@ -12,6 +12,15 @@ class ResourceTest(unittest.TestCase):
         self.doc_name = 'testdoc'
         self.otherdoc_name = 'othertestdoc'
 
+        self.test_doc = {
+            'herp': 'derp',
+            'name': 'Luke Skywalker'
+        }
+        self.test_otherdoc = {
+            'derp': 'herp',
+            'name': 'Larry, the Incorrigible Miscreant'
+        }
+
 
 class ConnectionTest(ResourceTest):
 
@@ -54,16 +63,27 @@ class DatabaseTest(ResourceTest):
         self.db.put()
 
     def testGet(self):
-        """
-        Create, read, and delete a database
-        """
         self.db.get()
+
+    def testBulk(self):
+        self.db.save_docs(self.test_doc, self.test_otherdoc)
+
+    def testIter(self):
+        self.db.save_docs(self.test_doc, self.test_otherdoc)
+        for derp in self.db:
+            pass
 
     def testAllDocs(self):
         self.db.all_docs()
 
     def testChanges(self):
         self.db.changes()
+        self.db.changes(params={
+            'feed': 'continuous'
+            })
+
+    def testViewCleanup(self):
+        self.db.view_cleanup()
 
     def tearDown(self):
         self.db.delete()
@@ -78,18 +98,19 @@ class DocumentTest(ResourceTest):
         self.doc = self.db.document(self.doc_name)
 
     def testCrud(self):
-        self.doc.put(params={
-            'herp': 'derp'
-            })
+        self.doc.put(params=self.test_doc)
         self.doc.get()
 
+    def testDict(self):
+        self.db[self.doc_name] = self.test_doc
+        self.db[self.doc_name]
+
     def testMerge(self):
-        self.doc.put(params={
-            'herp': 'derp'
-            })
-        self.doc.merge({
-            'herp': 'Luke Skywalker'
-            })
+        self.doc.put(params=self.test_doc)
+        self.doc.merge(self.test_otherdoc)
+
+    def testView(self):
+        self.doc.view('_view', 'derp')
 
     def testAttachment(self):
         self.doc.attachment('file')
@@ -113,9 +134,8 @@ class ViewTest(ResourceTest):
         """
         Show that views can be used as iterators
         """
-        self.doc.put(params={
-            'herp': 'derp'
-            })
+        for doc in [self.test_doc, self.test_otherdoc]:
+            self.db.post(params=doc)
         for derp in self.db.all_docs():
             pass
 

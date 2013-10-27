@@ -31,7 +31,7 @@ class Database(Resource):
         """Formats `Database.all_docs` for use as an iterator."""
         return self.all_docs().__iter__()
 
-    def save_docs(self, docs, **kwargs):
+    def save_docs(self, *docs, **kwargs):
         """
         Save many docs, all at once.
         """
