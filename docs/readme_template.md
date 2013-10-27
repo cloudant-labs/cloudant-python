@@ -94,11 +94,21 @@ Where possible, Divan errors inherit from built-in errors, so you can catch them
 All Divan errors also inherit from `DivanException`.
 
 ## API
+{%- for class in order %}
+- [{{class}}](#{{class}})
+{%- for name in docs[class].keys() if name != '_main' %}
+    - [{{class}}.{{name}}](#{{class}}.{{name}})
+{%- endfor %}
+{%- endfor %}
+
+
 {% for class in order %}
 {%- set main = docs[class]._main %}
+<a name="{{class}}"></a>
 ### {{class}}({{main.args}}{% if main.args and main.kwargs%}, {% endif %}{% if main.kwargs %}**{{main.kwargs}}{% endif %})
 {{main.docs}}
 {%- for name, method in docs[class].items() if name != '_main' %}
+<a name="{{class}}.{{name}}"></a>
 #### {{class}}.{{name}}({{method.args}}{% if method.args and method.kwargs%}, {% endif %}{% if method.kwargs %}**{{method.kwargs}}{% endif %})
 {{method.docs}}
 

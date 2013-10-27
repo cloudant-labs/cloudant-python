@@ -94,43 +94,99 @@ Where possible, Divan errors inherit from built-in errors, so you can catch them
 All Divan errors also inherit from `DivanException`.
 
 ## API
+- [Connection](#Connection)
+    - [Connection.active_tasks](#Connection.active_tasks)
+    - [Connection.all_dbs](#Connection.all_dbs)
+    - [Connection.database](#Connection.database)
+    - [Connection.delete](#Connection.delete)
+    - [Connection.get](#Connection.get)
+    - [Connection.info](#Connection.info)
+    - [Connection.login](#Connection.login)
+    - [Connection.logout](#Connection.logout)
+    - [Connection.post](#Connection.post)
+    - [Connection.put](#Connection.put)
+    - [Connection.replicate](#Connection.replicate)
+    - [Connection.session](#Connection.session)
+    - [Connection.uuids](#Connection.uuids)
+- [Database](#Database)
+    - [Database.all_docs](#Database.all_docs)
+    - [Database.changes](#Database.changes)
+    - [Database.delete](#Database.delete)
+    - [Database.document](#Database.document)
+    - [Database.get](#Database.get)
+    - [Database.missing_revs](#Database.missing_revs)
+    - [Database.post](#Database.post)
+    - [Database.put](#Database.put)
+    - [Database.revs_diff](#Database.revs_diff)
+    - [Database.save_docs](#Database.save_docs)
+    - [Database.view_cleanup](#Database.view_cleanup)
+- [Document](#Document)
+    - [Document.attachment](#Document.attachment)
+    - [Document.delete](#Document.delete)
+    - [Document.get](#Document.get)
+    - [Document.merge](#Document.merge)
+    - [Document.post](#Document.post)
+    - [Document.put](#Document.put)
+    - [Document.view](#Document.view)
+- [View](#View)
+    - [View.delete](#View.delete)
+    - [View.get](#View.get)
+    - [View.post](#View.post)
+    - [View.put](#View.put)
+- [Attachment](#Attachment)
+    - [Attachment.delete](#Attachment.delete)
+    - [Attachment.get](#Attachment.get)
+    - [Attachment.post](#Attachment.post)
+    - [Attachment.put](#Attachment.put)
 
+
+
+<a name="Connection"></a>
 ### Connection(uri, **kwargs)
 
+<a name="Connection.active_tasks"></a>
 #### Connection.active_tasks(**kwargs)
 
 List replication, compaction, and indexer tasks currently running.
 
+<a name="Connection.all_dbs"></a>
 #### Connection.all_dbs(**kwargs)
 
 List all databases.
 
+<a name="Connection.database"></a>
 #### Connection.database(name, **kwargs)
 
 Create a `Database` object prefixed with this connection's URL.
 
+<a name="Connection.delete"></a>
 #### Connection.delete(path, **kwargs)
 
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Connection.get"></a>
 #### Connection.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Connection.info"></a>
 #### Connection.info(**kwargs)
 
 Return information about your CouchDB / Cloudant instance.
 
+<a name="Connection.login"></a>
 #### Connection.login(username, password, **kwargs)
 
 Authenticate the connection via cookie.
 
+<a name="Connection.logout"></a>
 #### Connection.logout(**kwargs)
 
 De-authenticate the connection's cookie.
 
+<a name="Connection.post"></a>
 #### Connection.post(path, **kwargs)
 
 Make a POST request against the object's URI joined
@@ -140,6 +196,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Connection.put"></a>
 #### Connection.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
@@ -149,6 +206,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Connection.replicate"></a>
 #### Connection.replicate(source, target, opts, **kwargs)
 
 Begin a replication job.
@@ -158,44 +216,54 @@ is continuous (`continuous`).
 
 Note: unless continuous, will not return until the job is finished.
 
+<a name="Connection.session"></a>
 #### Connection.session(**kwargs)
 
 Get current user's authentication and authorization status.
 
+<a name="Connection.uuids"></a>
 #### Connection.uuids(count, **kwargs)
 
 Generate an arbitrary number of UUIDs.
 
+<a name="Database"></a>
 ### Database(uri, **kwargs)
 
 Connection to a specific database
 
+<a name="Database.all_docs"></a>
 #### Database.all_docs(**kwargs)
 
 Return an iterator over all documents in the database.
 
+<a name="Database.changes"></a>
 #### Database.changes(**kwargs)
 
 Gets a list of the changes made to the database. This can be used to monitor for update and modifications to the database for post processing or synchronization.
 
 Automatically adjusts the request to handle the different response behavior of polling, longpolling, and continuous modes.
 
+<a name="Database.delete"></a>
 #### Database.delete(path, **kwargs)
 
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Database.document"></a>
 #### Database.document(name, **kwargs)
 
 Create a `Document` object from `name`.
 
+<a name="Database.get"></a>
 #### Database.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Database.missing_revs"></a>
 #### Database.missing_revs(revs, **kwargs)
 
+<a name="Database.post"></a>
 #### Database.post(path, **kwargs)
 
 Make a POST request against the object's URI joined
@@ -205,6 +273,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Database.put"></a>
 #### Database.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
@@ -214,36 +283,45 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Database.revs_diff"></a>
 #### Database.revs_diff(revs, **kwargs)
 
+<a name="Database.save_docs"></a>
 #### Database.save_docs(docs, **kwargs)
 
 Save many docs, all at once.
 
+<a name="Database.view_cleanup"></a>
 #### Database.view_cleanup(**kwargs)
 
+<a name="Document"></a>
 ### Document(uri, **kwargs)
 
+<a name="Document.attachment"></a>
 #### Document.attachment(name, **kwargs)
 
 Create an `Attachment` object from `name` and the settings
 for the current database.
 
+<a name="Document.delete"></a>
 #### Document.delete(path, **kwargs)
 
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Document.get"></a>
 #### Document.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Document.merge"></a>
 #### Document.merge(docname, change, **kwargs)
 
 Get document by `docname`, merge `changes`,
 and then `PUT` the updated document back to the server
 
+<a name="Document.post"></a>
 #### Document.post(path, **kwargs)
 
 Make a POST request against the object's URI joined
@@ -253,6 +331,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Document.put"></a>
 #### Document.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
@@ -262,24 +341,29 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Document.view"></a>
 #### Document.view(method, function, **kwargs)
 
 Create a `View` object by joining `method` and `function`.
 
+<a name="View"></a>
 ### View(uri, **kwargs)
 
 Methods for design documents
 
+<a name="View.delete"></a>
 #### View.delete(path, **kwargs)
 
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="View.get"></a>
 #### View.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="View.post"></a>
 #### View.post(path, **kwargs)
 
 Make a POST request against the object's URI joined
@@ -289,6 +373,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="View.put"></a>
 #### View.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
@@ -298,20 +383,24 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Attachment"></a>
 ### Attachment(uri, **kwargs)
 
 Attachment methods for a single document
 
+<a name="Attachment.delete"></a>
 #### Attachment.delete(path, **kwargs)
 
 Make a DELETE request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Attachment.get"></a>
 #### Attachment.get(path, **kwargs)
 
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Attachment.post"></a>
 #### Attachment.post(path, **kwargs)
 
 Make a POST request against the object's URI joined
@@ -321,6 +410,7 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Attachment.put"></a>
 #### Attachment.put(path, **kwargs)
 
 Make a PUT request against the object's URI joined
