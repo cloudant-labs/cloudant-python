@@ -6,7 +6,7 @@ with open('requirements.txt', 'r') as f:
     dependencies = [line.strip() for line in f.readlines()]
 
 setup(name='Divan',
-      version='0.1.2',
+      version='0.1.3',
       description='Effortless CouchDB ODM',
       author='Max Thayer',
       author_email='garbados@gmail.com',
