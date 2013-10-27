@@ -38,7 +38,7 @@ Divan expose raw interactions -- HTTP requests, etc. -- through special methods,
       'herp': 'derp'
       })
     # delete the document
-    doc.delete() #
+    doc.delete()
     # but this also creates a document
     db['hello_world'] = {'herp': 'derp'}
 
