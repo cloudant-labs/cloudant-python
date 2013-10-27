@@ -7,3 +7,4 @@ sh==1.08
 six==1.3.0
 testy==0.4
 wsgiref==0.1.2
+requests-futures==0.9.4

@@ -24,7 +24,7 @@ class Document(Resource):
         Merge `changes` into the document,
         and then `PUT` the updated document back to the server
         """
-        doc = self.get().json()
+        doc = self.get().result().json()
         doc.update(change)
         return self.put(params=doc, **kwargs)
 

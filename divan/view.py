@@ -9,4 +9,4 @@ class View(Resource):
 
     def __iter__(self):
         # allow indexes to be used as iterators
-        return self.get().json()['rows'].__iter__()
+        return self.get().result().json()['rows'].__iter__()
