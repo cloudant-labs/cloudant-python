@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 from setuptools import setup
+import os
 
-with open('requirements.txt', 'r') as f:
+dir = os.path.dirname(__file__)
+with open(os.path.join(dir, 'requirements.txt'), 'r') as f:
     dependencies = [line.strip() for line in f.readlines()]
 
 setup(name='Divan',
-      version='0.2.1',
+      version='0.2.2',
       description='Asynchronous Cloudant / CouchDB Interface',
       author='Max Thayer',
       author_email='garbados@gmail.com',
