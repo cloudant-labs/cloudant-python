@@ -4,6 +4,11 @@ from .attachment import Attachment
 
 
 class Document(Resource):
+    """
+    Connection to a specific document.
+
+    Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/documents.html)
+    """
 
     def attachment(self, name, **kwargs):
         """
@@ -15,7 +20,10 @@ class Document(Resource):
 
     def view(self, method, function, **kwargs):
         """
-        Create a `View` object by joining `method` and `function`.
+        Create a `View` object by joining `method` and `function`. For example:
+
+            view = doc.view('_view', 'index-name')
+            # refers to /DB/_design/DOC/_view/index-name
         """
         opts = dict(self.opts.items() + kwargs.items())
         path = '/'.join([method, function])
@@ -23,8 +31,8 @@ class Document(Resource):
 
     def merge(self, change, **kwargs):
         """
-        Merge `changes` into the document,
-        and then `PUT` the updated document back to the server
+        Merge `change` into the document,
+        and then `PUT` the updated document back to the server.
         """
         doc = self.get().result().json()
         doc.update(change)
@@ -32,6 +40,9 @@ class Document(Resource):
 
     def delete(self, rev, **kwargs):
         """
-        Delete the given revision of the current document.
+        Delete the given revision of the current document. For example:
+
+            rev = doc.get().result().json()['_rev']
+            doc.delete(rev)
         """
         return super(Document, self).delete(params={'rev': rev}, **kwargs)
