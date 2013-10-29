@@ -3,6 +3,8 @@ python:
   - "2.7"
 services:
   - couchdb
+before_script:
+  - pip install coverage
 script:
   - coverage run --source=divan setup.py test
 after_success:
