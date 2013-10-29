@@ -45,9 +45,8 @@ class ConnectionTest(ResourceTest):
         self.conn.replicate(
             self.db_name, self.otherdb_name, params=params).result()
 
-        delete_futures = [self.db.delete(), self.conn.delete(
-            self.otherdb_name)]
-        map(lambda future: future.result(), delete_futures)
+        self.db.delete().result()
+        self.conn.delete(self.otherdb_name).result()
 
     def testCreateDb(self):
         self.conn.database(self.db_name)
