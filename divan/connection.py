@@ -3,7 +3,7 @@ from .database import Database
 
 
 class Connection(Resource):
-    
+
     """
     A connection to a Cloudant or CouchDB instance.
 

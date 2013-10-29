@@ -4,6 +4,7 @@ from .attachment import Attachment
 
 
 class Document(Resource):
+
     """
     Connection to a specific document.
 

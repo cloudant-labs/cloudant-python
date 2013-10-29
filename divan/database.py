@@ -28,7 +28,7 @@ class Database(Resource):
 
     def all_docs(self, **kwargs):
         """
-        Return a `View` object referencing all documents in the database. 
+        Return a `View` object referencing all documents in the database.
         You can treat it like an iterator:
 
             for doc in db.all_docs():
@@ -54,14 +54,14 @@ class Database(Resource):
 
     def changes(self, **kwargs):
         """
-        Gets a list of the changes made to the database. 
-        This can be used to monitor for update and modifications to the database 
+        Gets a list of the changes made to the database.
+        This can be used to monitor for update and modifications to the database
         for post processing or synchronization.
 
-        Automatically adjusts the request to handle the different response behavior 
+        Automatically adjusts the request to handle the different response behavior
         of polling, longpolling, and continuous modes.
 
-        For more information about the `_changes` feed, see 
+        For more information about the `_changes` feed, see
         [the docs](http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes).
         """
         if 'params' in kwargs:

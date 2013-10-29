@@ -11,7 +11,7 @@ class Resource(object):
 
     If you create an object, like a `Connection`, then use that to
     create a `Database` object, the `Database` will inherit any options
-    from the `Connection` object, like 
+    from the `Connection` object, like
 
     Implements CRUD operations for all other Divan objects.
     """
@@ -23,7 +23,7 @@ class Resource(object):
             del kwargs['session']
         else:
             self._session = FuturesSession()
-        
+
         self._set_options(**kwargs)
 
     def _set_options(self, **kwargs):
@@ -80,7 +80,7 @@ class Resource(object):
         body without it being modified, use `kwargs['data']`.
         """
         return self._make_request('put', path, **kwargs)
-    
+
     def post(self, path='', **kwargs):
         """
         Make a POST request against the object's URI joined
