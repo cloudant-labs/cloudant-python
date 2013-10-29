@@ -37,6 +37,7 @@ class MethodNotAllowedError(DivanException, AttributeError):
 class ConflictError(DivanException, AssertionError):
     pass
 
+
 class PreconditionError(DivanException, AssertionError):
     pass
 
@@ -49,6 +50,7 @@ ERROR_CODES = {
     409: ConflictError,
     412: PreconditionError
 }
+
 
 def validate(response):
     if response.status_code not in HTTP_SUCCESS_RANGE:

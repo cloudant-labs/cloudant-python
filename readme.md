@@ -260,19 +260,31 @@ Generate an arbitrary number of UUIDs.
 <a name="Database"></a>
 ### Database(uri, **kwargs)
 
-Connection to a specific database
+Connection to a specific database.
+
+Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/database.html).
 
 <a name="Database.all_docs"></a>
 #### Database.all_docs(**kwargs)
 
-Return an iterator over all documents in the database.
+Return a `View` object referencing all documents in the database.
+You can treat it like an iterator:
+
+    for doc in db.all_docs():
+        print doc
 
 <a name="Database.changes"></a>
 #### Database.changes(**kwargs)
 
-Gets a list of the changes made to the database. This can be used to monitor for update and modifications to the database for post processing or synchronization.
+Gets a list of the changes made to the database.
+This can be used to monitor for update and modifications to the database
+for post processing or synchronization.
 
-Automatically adjusts the request to handle the different response behavior of polling, longpolling, and continuous modes.
+Automatically adjusts the request to handle the different response behavior
+of polling, longpolling, and continuous modes.
+
+For more information about the `_changes` feed, see
+[the docs](http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes).
 
 <a name="Database.delete"></a>
 #### Database.delete(path, **kwargs)
@@ -293,6 +305,8 @@ with `path`. `kwargs` are passed directly to Requests.
 
 <a name="Database.missing_revs"></a>
 #### Database.missing_revs(revs, **kwargs)
+
+Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-missing-revisions).
 
 <a name="Database.post"></a>
 #### Database.post(path, **kwargs)
@@ -317,16 +331,30 @@ body without it being modified, use `kwargs['data']`.
 <a name="Database.revs_diff"></a>
 #### Database.revs_diff(revs, **kwargs)
 
+Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-differences-between-revisions)
+
 <a name="Database.save_docs"></a>
 #### Database.save_docs(**kwargs)
 
-Save many docs, all at once.
+Save many docs, all at once. Each `doc` argument must be a dict, like this:
+
+        db.save_docs({...}, {...}, {...})
+        # saves all documents in one HTTP request
 
 <a name="Database.view_cleanup"></a>
 #### Database.view_cleanup(**kwargs)
 
+Cleans up the cached view output on disk for a given view. For example:
+
+    print db.view_cleanup().result().json()
+    # {'ok': True}
+
 <a name="Document"></a>
 ### Document(uri, **kwargs)
+
+Connection to a specific document.
+
+Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/documents.html)
 
 <a name="Document.attachment"></a>
 #### Document.attachment(name, **kwargs)
@@ -337,7 +365,10 @@ for the current database.
 <a name="Document.delete"></a>
 #### Document.delete(rev, **kwargs)
 
-Delete the given revision of the current document.
+Delete the given revision of the current document. For example:
+
+    rev = doc.get().result().json()['_rev']
+    doc.delete(rev)
 
 <a name="Document.get"></a>
 #### Document.get(path, **kwargs)
@@ -348,8 +379,8 @@ with `path`. `kwargs` are passed directly to Requests.
 <a name="Document.merge"></a>
 #### Document.merge(change, **kwargs)
 
-Merge `changes` into the document,
-and then `PUT` the updated document back to the server
+Merge `change` into the document,
+and then `PUT` the updated document back to the server.
 
 <a name="Document.post"></a>
 #### Document.post(path, **kwargs)
@@ -374,12 +405,29 @@ body without it being modified, use `kwargs['data']`.
 <a name="Document.view"></a>
 #### Document.view(method, function, **kwargs)
 
-Create a `View` object by joining `method` and `function`.
+Create a `View` object by joining `method` and `function`. For example:
+
+    view = doc.view('_view', 'index-name')
+    # refers to /DB/_design/DOC/_view/index-name
 
 <a name="View"></a>
 ### View(uri, **kwargs)
 
-Methods for design documents
+Methods for design document indexes and special methods.
+Different kinds of indexes / methods will behave differently, so here are helpful docs:
+
+* [Lucene search indexes](http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries)
+* [Secondary indexes / "views"](http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view)
+* [List functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions)
+* [Show functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions)
+
+Then, you just use basic HTTP methods to perform queries, like this:
+
+    view.get(params=QUERY_ARGUMENTS)
+
+Remember, before you can query an index, you have to make sure it's in your database.
+See [these docs](http://docs.cloudant.com/api/design-documents-get-put-delete-copy.html#creating-or-updating-a-design-document)
+for how to do that.
 
 <a name="View.delete"></a>
 #### View.delete(path, **kwargs)

@@ -6,7 +6,9 @@ from .view import View
 class Database(Resource):
 
     """
-    Connection to a specific database
+    Connection to a specific database.
+
+    Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/database.html).
     """
 
     def document(self, name, **kwargs):
@@ -25,7 +27,13 @@ class Database(Resource):
         self.put(name, params=doc).result()
 
     def all_docs(self, **kwargs):
-        """Return an iterator over all documents in the database."""
+        """
+        Return a `View` object referencing all documents in the database.
+        You can treat it like an iterator:
+
+            for doc in db.all_docs():
+                print doc
+        """
         return View(self._make_url('_all_docs'), session=self._session, **kwargs)
 
     def __iter__(self):
@@ -34,7 +42,10 @@ class Database(Resource):
 
     def save_docs(self, *docs, **kwargs):
         """
-        Save many docs, all at once.
+        Save many docs, all at once. Each `doc` argument must be a dict, like this:
+
+                db.save_docs({...}, {...}, {...})
+                # saves all documents in one HTTP request
         """
         params = {
             'docs': docs
@@ -43,9 +54,15 @@ class Database(Resource):
 
     def changes(self, **kwargs):
         """
-        Gets a list of the changes made to the database. This can be used to monitor for update and modifications to the database for post processing or synchronization.
+        Gets a list of the changes made to the database.
+        This can be used to monitor for update and modifications to the database
+        for post processing or synchronization.
 
-        Automatically adjusts the request to handle the different response behavior of polling, longpolling, and continuous modes.
+        Automatically adjusts the request to handle the different response behavior
+        of polling, longpolling, and continuous modes.
+
+        For more information about the `_changes` feed, see
+        [the docs](http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes).
         """
         if 'params' in kwargs:
             if 'feed' in kwargs['params']:
@@ -55,10 +72,22 @@ class Database(Resource):
         return self.get('_changes', **kwargs)
 
     def missing_revs(self, revs, **kwargs):
+        """
+        Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-missing-revisions).
+        """
         return self.post('_missing_revs', params=revs, **kwargs)
 
     def revs_diff(self, revs, **kwargs):
+        """
+        Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-differences-between-revisions)
+        """
         return self.post('_revs_diff', params=revs, **kwargs)
 
     def view_cleanup(self, **kwargs):
+        """
+        Cleans up the cached view output on disk for a given view. For example:
+
+            print db.view_cleanup().result().json()
+            # {'ok': True}
+        """
         return self.post('_view_cleanup', **kwargs)
