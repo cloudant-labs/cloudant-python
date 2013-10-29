@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(name='Divan',
-      version='0.2.3',
+      version='0.2.4',
       description='Asynchronous Cloudant / CouchDB Interface',
       author='Max Thayer',
       author_email='garbados@gmail.com',
