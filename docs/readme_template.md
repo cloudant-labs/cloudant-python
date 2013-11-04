@@ -1,4 +1,4 @@
-# Cloudant.py [![Build Status](https://travis-ci.org/cloudant-labs/cloudant.png)](https://travis-ci.org/cloudant-labs/cloudant) [![Coverage Status](https://coveralls.io/repos/cloudant-labs/cloudant/badge.png)](https://coveralls.io/r/cloudant-labs/cloudant) [![PyPi version](https://pypip.in/v/cloudant/badge.png)](https://crate.io/packages/cloudant/) [![PyPi downloads](https://pypip.in/d/cloudant/badge.png)](https://crate.io/packages/cloudant/)
+# Cloudant.py [![Build Status](https://travis-ci.org/cloudant-labs/cloudant-python.png)](https://travis-ci.org/cloudant-labs/cloudant-python) [![Coverage Status](https://coveralls.io/repos/cloudant-labs/cloudant-python/badge.png)](https://coveralls.io/r/cloudant-labs/cloudant-python) [![PyPi version](https://pypip.in/v/cloudant/badge.png)](https://crate.io/packages/cloudant/) [![PyPi downloads](https://pypip.in/d/cloudant/badge.png)](https://crate.io/packages/cloudant/)
 
 [wiki]: http://en.wikipedia.org/wiki/Cloudant.py_(furniture\)
 [wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
