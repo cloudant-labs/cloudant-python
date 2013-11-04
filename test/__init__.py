@@ -29,13 +29,13 @@ class ConnectionTest(ResourceTest):
         self.conn = cloudant.Connection(self.uri)
 
     def testAllDbs(self):
-        self.conn.all_dbs()
+        assert self.conn.all_dbs().result().status_code == 200
 
     def testSession(self):
-        self.conn.session()
+        assert self.conn.session().result().status_code == 200
 
     def testActiveTasks(self):
-        self.conn.active_tasks()
+        assert self.conn.active_tasks().result().status_code == 200
 
     def testSecurity(self):
         username = 'user'
@@ -45,6 +45,9 @@ class ConnectionTest(ResourceTest):
         # disable admin party
         path = '_config/admins/%s' % username
         assert self.conn.put(path, data="\"%s\"" % password).result().status_code == 200
+        # login, logout
+        assert self.conn.login(username, password).result().status_code == 200
+        assert self.conn.logout().result().status_code == 200
         # re-enable admin party
         assert self.conn.login(username, password).result().status_code == 200
         assert self.conn.delete(path).result().status_code == 200
@@ -65,7 +68,7 @@ class ConnectionTest(ResourceTest):
         self.conn[self.db_name]
 
     def testUuids(self):
-        self.conn.uuids()
+        assert self.conn.uuids().result().status_code == 200
 
 
 class DatabaseTest(ResourceTest):
@@ -73,16 +76,16 @@ class DatabaseTest(ResourceTest):
     def setUp(self):
         super(DatabaseTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
-        self.db.put().result()
+        assert self.db.put().result().status_code == 201
 
     def testGet(self):
-        self.db.get().result()
+        assert self.db.get().result().status_code == 200
 
     def testBulk(self):
-        self.db.save_docs(self.test_doc, self.test_otherdoc).result()
+        assert self.db.save_docs(self.test_doc, self.test_otherdoc).result().status_code == 201
 
     def testIter(self):
-        self.db.save_docs(self.test_doc, self.test_otherdoc)
+        assert self.db.save_docs(self.test_doc, self.test_otherdoc).result().status_code == 201
         for derp in self.db:
             pass
 
@@ -90,16 +93,16 @@ class DatabaseTest(ResourceTest):
         self.db.all_docs()
 
     def testChanges(self):
-        self.db.changes().result()
-        self.db.changes(params={
+        assert self.db.changes().result().status_code == 200
+        assert self.db.changes(params={
             'feed': 'continuous'
-        }).result()
+        }).result().status_code == 200
 
     def testViewCleanup(self):
-        self.db.view_cleanup().result()
+        assert self.db.view_cleanup().result().status_code == 202
 
     def tearDown(self):
-        self.db.delete().result()
+        assert self.db.delete().result().status_code == 200
 
 
 class DocumentTest(ResourceTest):
@@ -107,22 +110,23 @@ class DocumentTest(ResourceTest):
     def setUp(self):
         super(DocumentTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
-        self.db.put().result()
+        assert self.db.put().result().status_code == 201
         self.doc = self.db.document(self.doc_name)
 
     def testCrud(self):
-        self.doc.put(params=self.test_doc).result()
+        assert self.doc.put(params=self.test_doc).result().status_code == 201
         resp = self.doc.get().result()
+        assert resp.status_code == 200
         rev = resp.json()['_rev']
-        self.doc.delete(rev).result()
+        assert self.doc.delete(rev).result().status_code == 200
 
     def testDict(self):
         self.db[self.doc_name] = self.test_doc
         self.db[self.doc_name]
 
     def testMerge(self):
-        self.doc.put(params=self.test_doc).result()
-        self.doc.merge(self.test_otherdoc).result()
+        assert self.doc.put(params=self.test_doc).result().status_code == 201
+        assert self.doc.merge(self.test_otherdoc).result().status_code == 201
 
     def testView(self):
         self.doc.view('_view', 'derp')
@@ -131,7 +135,7 @@ class DocumentTest(ResourceTest):
         self.doc.attachment('file')
 
     def tearDown(self):
-        self.db.delete().result()
+        assert self.db.delete().result().status_code == 200
 
 
 class AttachmentTest(ResourceTest):
@@ -143,7 +147,7 @@ class ViewTest(ResourceTest):
     def setUp(self):
         super(ViewTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
-        self.db.put().result()
+        assert self.db.put().result().status_code == 201
         self.doc = self.db.document(self.doc_name)
 
     def testPrimaryIndex(self):
@@ -151,12 +155,12 @@ class ViewTest(ResourceTest):
         Show that views can be used as iterators
         """
         for doc in [self.test_doc, self.test_otherdoc]:
-            self.db.post(params=doc)
+            assert self.db.post(params=doc).result().status_code == 201
         for derp in self.db.all_docs():
             pass
 
     def tearDown(self):
-        self.db.delete().result()
+        assert self.db.delete().result().status_code == 200
 
 
 class ErrorTest(ResourceTest):
