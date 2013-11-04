@@ -4,5 +4,4 @@ venv
 *.pyc
 build
 dist
-Divan.egg-info
 .coverage
