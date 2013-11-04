@@ -1,0 +1,3 @@
+# /usr/local/bin/bash
+
+autopep8 -irv cloudant test setup.py

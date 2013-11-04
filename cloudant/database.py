@@ -1,122 +1,93 @@
-#!/usr/bin/env python
-# coding=utf-8
-from itertools import chain
-import json
-from urllib import urlencode
-from cloudant.document import Document
+from .resource import Resource
+from .document import Document
+from .view import View
 
 
-class Database(object):
+class Database(Resource):
+
     """
-    Cloudant database
+    Connection to a specific database.
+
+    Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/database.html).
     """
 
-    def __init__(self, name, client):
+    def document(self, name, **kwargs):
         """
-        Initializes a database by sending a request to the Cloudant service
-
-        :param name: Name of the database
-        :param client: Client used to connect to the service
+        Create a `Document` object from `name`.
         """
-        response = client.get_database_info(name)
-        self.name = name
+        opts = dict(self.opts.items() + kwargs.items())
+        return Document(self._make_url(name), session=self._session, **opts)
 
-        self.client = client
-        if response and isinstance(response, dict):
-            for key, value in response.items():
-                if key == 'db_name':
-                    key = 'name'
-                setattr(self, key, value)
-        else:
-            raise ValueError('{} is not a valid database'.format(name))
+    def __getitem__(self, name):
+        """Shortcut to `Database.document`."""
+        return self.document(name, **self.opts)
 
-    def get_all_documents(self, include_docs=True, **kwargs):
+    def __setitem__(self, name, doc):
+        """Creates `doc` with an ID of `name`."""
+        self.put(name, params=doc).result()
+
+    def all_docs(self, **kwargs):
         """
-        Get all documents in the database
+        Return a `View` object referencing all documents in the database.
+        You can treat it like an iterator:
 
-        :param include_docs: Include the full content of the documents in the return
-
-        :param kwargs: can include ::
-
-            descending      :bool:      Return the documents in descending by key order: False
-            endkey          :string:    Stop returning records when the specified key is reached
-            endkey_docid    :string:    Stop returning records when the specified document ID is reached
-            group           :bool:      Group the results using the reduce function to a group or single row: False
-            group_level     :int:       Specify the group level to be used
-            include_docs    :bool:      Include the full content of the documents in the return: False
-            inclusive_end   :bool:      Specifies whether the specified end key should be included in the result: True
-            key             :string:    Return only documents that match the specified key
-            limit           :int:       Limit the number of the returned documents to the specified number
-            reduce          :bool:      Use the reduction function: True
-            skip            :int:       Skip this number of records before starting to return the results: 0
-            stale           :string:    Allow the results from a stale view to be used: '', 'ok'
-            startkey        :string:    Return records starting with the specified key
-            startkey_docid  :string:    Return records starting with the specified document ID
-
-        :return: List of Document objects
+            for doc in db.all_docs():
+                print doc
         """
-        kwargs['include_docs'] = include_docs
+        return View(self._make_url('_all_docs'), session=self._session, **kwargs)
 
-        for kwarg, value in kwargs.items():
-            kwargs[kwarg] = str(value).lower()
+    def __iter__(self):
+        """Formats `Database.all_docs` for use as an iterator."""
+        return self.all_docs().__iter__()
 
-        r = self.client.get('/{}/_all_docs'.format(self.name), params=urlencode(kwargs))
-
-        if r.ok:
-            r_json = r.json()
-
-
-            return [Document(x) for x in r_json['rows']]
-        return []
-
-    def get_document(self, _id, **kwargs):
+    def save_docs(self, *docs, **kwargs):
         """
-        Retrieve a document from the database
+        Save many docs, all at once. Each `doc` argument must be a dict, like this:
 
-        :param id: ID of the document to retrieve
-
-        :param kwargs: can include ::
-
-            conflicts   :bool:      Returns the conflict tree for the document.
-            rev         :string:    Specify the revision to return
-            revs        :bool:      Return a list of the revisions for the document
-            revs_info   :bool:      Return a list of detailed revision information for the document
-
-        :return: Document retrieved from the database
+                db.save_docs({...}, {...}, {...})
+                # saves all documents in one HTTP request
         """
-        r = self.client.get('/{}/{}'.format(self.name, _id), params=urlencode(kwargs))
+        params = {
+            'docs': docs
+        }
+        return self.post('_bulk_docs', params=params, **kwargs)
 
-        if r.status_code == 200:
-            return Document(r.json())
-
-    def create_document(self, **kwargs):
+    def changes(self, **kwargs):
         """
-        Creates or updates a document in the database
+        Gets a list of the changes made to the database.
+        This can be used to monitor for update and modifications to the database
+        for post processing or synchronization.
 
-        :param kwargs: can include ::
+        Automatically adjusts the request to handle the different response behavior
+        of polling, longpolling, and continuous modes.
 
-            batch   :string:        Allow document store request to be batched with others: '', 'ok'
-
-        :return: The created or updated Document
+        For more information about the `_changes` feed, see
+        [the docs](http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes).
         """
-        json_kwargs = json.dumps(kwargs)
-        r = self.client.post('/{}'.format(self.name), data=json_kwargs, headers={'content-type': 'application/json'})
+        if 'params' in kwargs:
+            if 'feed' in kwargs['params']:
+                if kwargs['params']['feed'] == 'continuous':
+                    kwargs['stream'] = True
 
-        if r.status_code == 201:
-            return_kwargs = json.loads(json.dumps(r.json()))
-            return Document(dict(chain(kwargs.iteritems(), return_kwargs.iteritems())))
+        return self.get('_changes', **kwargs)
 
-        elif r.status_code == 409:
-            raise KeyError('Document already exists in the database')
-
-    def delete_document(self, _id, _rev):
+    def missing_revs(self, revs, **kwargs):
         """
-        Delete a revision of a document
-
-        :param _id: Document ID
-        :param _rev: Current revision of the document for validation
-        :return: Boolean for success or failure
+        Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-missing-revisions).
         """
-        r = self.client.delete('/{}/{}'.format(self.name, _id), params={'rev':_rev})
+        return self.post('_missing_revs', params=revs, **kwargs)
 
-        return r.ok
+    def revs_diff(self, revs, **kwargs):
+        """
+        Refers to [this method](http://docs.cloudant.com/api/database.html#retrieving-differences-between-revisions)
+        """
+        return self.post('_revs_diff', params=revs, **kwargs)
+
+    def view_cleanup(self, **kwargs):
+        """
+        Cleans up the cached view output on disk for a given view. For example:
+
+            print db.view_cleanup().result().json()
+            # {'ok': True}
+        """
+        return self.post('_view_cleanup', **kwargs)
