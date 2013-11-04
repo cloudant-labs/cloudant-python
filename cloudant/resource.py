@@ -1,5 +1,6 @@
 from requests_futures.sessions import FuturesSession
 import json
+import copy
 
 
 class Resource(object):
@@ -47,18 +48,20 @@ class Resource(object):
         validate(response)
 
     def _make_request(self, method, path='', **kwargs):
-        kwargs.update(self.opts)
+        # kwargs supercede self.opts
+        opts = copy.copy(self.opts)
+        opts.update(kwargs)
         # normalize `params` kwarg according to method
         if method in ['post', 'put']:
-            if 'params' in kwargs:
-                kwargs['data'] = json.dumps(kwargs['params'])
+            if 'params' in opts:
+                opts['data'] = json.dumps(opts['params'])
                 del kwargs['params']
         future = getattr(
             self._session,
             method)(
                 self._make_url(
                     path),
-                **kwargs)
+                **opts)
         return future
 
     def get(self, path='', **kwargs):

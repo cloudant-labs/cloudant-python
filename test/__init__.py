@@ -37,16 +37,28 @@ class ConnectionTest(ResourceTest):
     def testActiveTasks(self):
         self.conn.active_tasks()
 
+    def testSecurity(self):
+        username = 'user'
+        password = 'password'
+        # try auth login when admin party is on
+        assert self.conn.login(username, password).result().status_code == 401
+        # disable admin party
+        path = '_config/admins/%s' % username
+        assert self.conn.put(path, data="\"%s\"" % password).result().status_code == 200
+        # re-enable admin party
+        assert self.conn.login(username, password).result().status_code == 200
+        assert self.conn.delete(path).result().status_code == 200
+
     def testReplicate(self):
         self.db = self.conn.database(self.db_name)
-        self.db.put().result()
+        assert self.db.put().result().status_code == 201
 
         params = dict(create_target=True)
-        self.conn.replicate(
-            self.db_name, self.otherdb_name, params=params).result()
+        assert self.conn.replicate(
+            self.db_name, self.otherdb_name, params=params).result().status_code == 200
 
-        self.db.delete().result()
-        self.conn.delete(self.otherdb_name).result()
+        assert self.db.delete().result().status_code == 200
+        assert self.conn.delete(self.otherdb_name).result().status_code == 200
 
     def testCreateDb(self):
         self.conn.database(self.db_name)

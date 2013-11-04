@@ -38,7 +38,7 @@ class Connection(Resource):
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        data = "name=%s&password=%s" % username, password
+        data = "name=%s&password=%s" % (username, password)
         return self.post('_session', headers=headers, data=data, **kwargs)
 
     def logout(self, **kwargs):
