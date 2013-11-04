@@ -1,26 +1,22 @@
-# Divan [![Build Status](https://travis-ci.org/garbados/divan.png)](https://travis-ci.org/garbados/divan) [![Coverage Status](https://coveralls.io/repos/garbados/divan/badge.png)](https://coveralls.io/r/garbados/divan) [![PyPi version](https://pypip.in/v/Divan/badge.png)](https://crate.io/packages/Divan/) [![PyPi downloads](https://pypip.in/d/Divan/badge.png)](https://crate.io/packages/Divan/)
+# Cloudant.py [![Build Status](https://travis-ci.org/garbados/cloudant.png)](https://travis-ci.org/garbados/cloudant) [![Coverage Status](https://coveralls.io/repos/garbados/cloudant/badge.png)](https://coveralls.io/r/garbados/cloudant) [![PyPi version](https://pypip.in/v/Cloudant.py/badge.png)](https://crate.io/packages/Cloudant.py/) [![PyPi downloads](https://pypip.in/d/Cloudant.py/badge.png)](https://crate.io/packages/Cloudant.py/)
 
-[wiki]: http://en.wikipedia.org/wiki/Divan_(furniture\)
+[wiki]: http://en.wikipedia.org/wiki/Cloudant.py_(furniture\)
 [wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
 
 An effortless Cloudant / CouchDB interface for Python.
 
-Put on your favorite hookah, sit back on the [divan][wiki], and relax.
-
-![What a Divan Looks Like][wiki_img]
-
 ## Install
 
-    pip install divan
+    pip install cloudant
     
 ## Usage
 
-Divan is an asynchronous wrapper around Python [Requests](http://www.python-requests.org/en/latest/) for interacting with CouchDB or Cloudant instances. Check it out:
+Cloudant.py is an asynchronous wrapper around Python [Requests](http://www.python-requests.org/en/latest/) for interacting with CouchDB or Cloudant instances. Check it out:
 
-    import divan
+    import cloudant
 
     # create a connection object
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     # create a database object
     db = conn.database('test')
     # now, create the database on the server
@@ -31,21 +27,21 @@ Divan is an asynchronous wrapper around Python [Requests](http://www.python-requ
 
 ### Philosophy
 
-Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Divan uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
+Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant.py uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     db = conn.database('test')
     same_db = conn['test']
     assert db.uri == same_db.uri
     # True
 
-Divan expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as `__getitem__`, act as Pythonic shortcuts to those methods. For example:
+Cloudant.py expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as `__getitem__`, act as Pythonic shortcuts to those methods. For example:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     db = conn.database('test')
     doc = db.document('test_doc')
     # create the document
@@ -59,11 +55,11 @@ Divan expose raw interactions -- HTTP requests, etc. -- through special methods,
     # but this also creates a document
     db['hello_world'] = {'herp': 'derp'}
 
-If CouchDB has a special endpoint for something, it's in Divan as a special method, so any special circumstances are taken care of automagically. For example:
+If CouchDB has a special endpoint for something, it's in Cloudant.py as a special method, so any special circumstances are taken care of automagically. For example:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     db = conn.database('test')
     view = db.all_docs() # returns all docs in the database
     for doc in db:
@@ -77,9 +73,9 @@ If CouchDB has a special endpoint for something, it's in Divan as a special meth
 
 HTTP request methods like `get` and `post` return `Future` objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the `result` method, like so:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     db = conn['test']
     future = db.put()
     response = future.result()
@@ -92,38 +88,38 @@ As a result, any methods which must make an HTTP request return a `Future`.
 
 If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     db = conn.database('test')
     doc = db.document('test_doc')
-    otherdoc = divan.Document('http://localhost:5984/test/test_doc')
+    otherdoc = cloudant.Document('http://localhost:5984/test/test_doc')
     assert doc.uri == otherdoc.uri
     # True
 
 ### Errors
 
-All methods return response objects generated by Requests, if the request was successful. Else, the response object is attached to the thrown error. If a response has a bad status code, Divan throws an error. For example:
+All methods return response objects generated by Requests, if the request was successful. Else, the response object is attached to the thrown error. If a response has a bad status code, Cloudant.py throws an error. For example:
 
-    import divan
+    import cloudant
 
-    conn = divan.Connection()
+    conn = cloudant.Connection()
     # connect to a database that doesn't exist
     db = conn.database('test')
     doc = db.document('doesnotexist')
     doc.put({
       'this_will': 'throw_an_error'
       })
-    # throws divan.error.NotFoundError
+    # throws cloudant.error.NotFoundError
 
-Where possible, Divan errors inherit from built-in errors, so you can catch them more naturally. To wit:
+Where possible, Cloudant.py errors inherit from built-in errors, so you can catch them more naturally. To wit:
 
 * `NotFoundError` inherits from `LookupError`
 * `BadRequestError` inherits from `SyntaxError`
 * `MethodNotAllowedError` inherits from `AttributeError`
 * `ConflictError` and `PreconditionError` inherit from `AssertionError`
 
-All Divan errors also inherit from `DivanException`.
+All Cloudant.py errors also inherit from `Cloudant.pyException`.
 
 ## API
 - [Connection](#Connection)
@@ -175,7 +171,7 @@ All Divan errors also inherit from `DivanException`.
 
 A connection to a Cloudant or CouchDB instance.
 
-    connection = divan.Connection()
+    connection = cloudant.Connection()
     connection.login(USERNAME, PASSWORD).result()
     print connection.get().result().json()
     # {"couchdb": "Welcome", ...}
@@ -501,17 +497,17 @@ body without it being modified, use `kwargs['data']`.
 
 ## Testing
 
-To run Divan's tests, just do:
+To run Cloudant.py's tests, just do:
 
     python setup.py test
 
 ## Documentation
 
-The API reference is automatically generated from the docstrings of each class and its methods. To install Divan with the necessary extensions to build the docs, do this:
+The API reference is automatically generated from the docstrings of each class and its methods. To install Cloudant.py with the necessary extensions to build the docs, do this:
 
-    pip install -e divan[docs]
+    pip install -e cloudant[docs]
 
-Then, in Divan's root directory, do this:
+Then, in Cloudant.py's root directory, do this:
   
     python docs
 

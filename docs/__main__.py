@@ -1,5 +1,5 @@
 import inspect
-import divan
+import cloudant
 import jinja2
 import re
 import os
@@ -45,8 +45,8 @@ def get_docs(method):
 def get_args(method):
     return inspect.getargspec(method)
 
-for item_name in dir(divan):
-    item = getattr(divan, item_name)
+for item_name in dir(cloudant):
+    item = getattr(cloudant, item_name)
     if not (is_module(item) or is_private(item_name)):
         docs[item_name] = OrderedDict()
         docs[item_name]['_main'] = get_docs(item)
