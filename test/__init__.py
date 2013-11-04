@@ -44,7 +44,8 @@ class ConnectionTest(ResourceTest):
         assert self.conn.login(username, password).result().status_code == 401
         # disable admin party
         path = '_config/admins/%s' % username
-        assert self.conn.put(path, data="\"%s\"" % password).result().status_code == 200
+        assert self.conn.put(path, data="\"%s\"" %
+                             password).result().status_code == 200
         # login, logout
         assert self.conn.login(username, password).result().status_code == 200
         assert self.conn.logout().result().status_code == 200
@@ -82,10 +83,12 @@ class DatabaseTest(ResourceTest):
         assert self.db.get().result().status_code == 200
 
     def testBulk(self):
-        assert self.db.save_docs(self.test_doc, self.test_otherdoc).result().status_code == 201
+        assert self.db.save_docs(
+            self.test_doc, self.test_otherdoc).result().status_code == 201
 
     def testIter(self):
-        assert self.db.save_docs(self.test_doc, self.test_otherdoc).result().status_code == 201
+        assert self.db.save_docs(
+            self.test_doc, self.test_otherdoc).result().status_code == 201
         for derp in self.db:
             pass
 
