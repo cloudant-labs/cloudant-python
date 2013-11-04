@@ -1,4 +1,0 @@
-# Requirements for development
-ipython==0.13.2
-tox==1.4.3
-nose==1.2.1

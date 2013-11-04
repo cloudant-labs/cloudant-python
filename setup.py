@@ -2,18 +2,18 @@
 
 from setuptools import setup
 
-setup(name='Divan',
+setup(name='Cloudant',
       version='0.2.4',
       description='Asynchronous Cloudant / CouchDB Interface',
       author='Max Thayer',
       author_email='garbados@gmail.com',
-      url='https://github.com/garbados/divan',
-      packages=['divan'],
+      url='https://github.com/cloudant-labs/cloudant',
+      packages=['cloudant'],
       install_requires=[
           'requests-futures==0.9.4',
       ],
       test_suite="test",
-      # install with `pip install -e divan[doc]`
+      # install with `pip install -e cloudant[doc]`
       extras_require={
       'docs': [
           'jinja2>=2.7',

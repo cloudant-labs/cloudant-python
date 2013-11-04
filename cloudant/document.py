@@ -1,27 +1,49 @@
-#!/usr/bin/env python
-# coding=utf-8
+from .resource import Resource
+from .view import View
+from .attachment import Attachment
 
 
-class Document(object):
+class Document(Resource):
+
     """
-    Document stored in the Cloudant database
+    Connection to a specific document.
+
+    Learn more about the raw API from the [Cloudant docs](http://docs.cloudant.com/api/documents.html)
     """
 
-    def __init__(self, json):
+    def attachment(self, name, **kwargs):
         """
-        Initializes a document from a dictionary
-
-        :param json: Dictionary returned from the service
+        Create an `Attachment` object from `name` and the settings
+        for the current database.
         """
+        opts = dict(self.opts.items() + kwargs.items())
+        return Attachment(self._make_url(name), session=self._session, **opts)
 
-        if 'doc' in json.keys():
-            init_dict = json['doc']
-        else:
-            init_dict = json
+    def view(self, method, function, **kwargs):
+        """
+        Create a `View` object by joining `method` and `function`. For example:
 
-        for key, value in init_dict.items():
-            if key == '_id':
-                key = 'id'
-            if key == '_rev':
-                key = 'rev'
-            setattr(self, key, value)
+            view = doc.view('_view', 'index-name')
+            # refers to /DB/_design/DOC/_view/index-name
+        """
+        opts = dict(self.opts.items() + kwargs.items())
+        path = '/'.join([method, function])
+        return View(self._make_url(path), session=self._session, **opts)
+
+    def merge(self, change, **kwargs):
+        """
+        Merge `change` into the document,
+        and then `PUT` the updated document back to the server.
+        """
+        doc = self.get().result().json()
+        doc.update(change)
+        return self.put(params=doc, **kwargs)
+
+    def delete(self, rev, **kwargs):
+        """
+        Delete the given revision of the current document. For example:
+
+            rev = doc.get().result().json()['_rev']
+            doc.delete(rev)
+        """
+        return super(Document, self).delete(params={'rev': rev}, **kwargs)

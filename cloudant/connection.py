@@ -7,7 +7,7 @@ class Connection(Resource):
     """
     A connection to a Cloudant or CouchDB instance.
 
-        connection = divan.Connection()
+        connection = cloudant.Connection()
         connection.login(USERNAME, PASSWORD).result()
         print connection.get().result().json()
         # {"couchdb": "Welcome", ...}
