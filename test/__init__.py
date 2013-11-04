@@ -154,11 +154,8 @@ class ErrorTest(ResourceTest):
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
 
     def testMissing(self):
-        try:
-            self.db.get().result()
-            raise Exception("Shouldn't make it this far >:(")
-        except LookupError:
-            pass
+        response = self.db.get().result()
+        assert response.status_code == 404
 
 if __name__ == "__main__":
     unittest.main()

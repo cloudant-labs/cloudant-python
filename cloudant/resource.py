@@ -1,6 +1,5 @@
 from requests_futures.sessions import FuturesSession
 import json
-from .error import validate
 
 
 class Resource(object):
@@ -59,7 +58,6 @@ class Resource(object):
             method)(
                 self._make_url(
                     path),
-                background_callback=self._validate,
                 **kwargs)
         return future
 
