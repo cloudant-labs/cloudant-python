@@ -1,4 +1,5 @@
 import cloudant
+from collections import defaultdict
 import unittest
 import os
 
@@ -103,6 +104,17 @@ class DatabaseTest(ResourceTest):
 
     def testViewCleanup(self):
         assert self.db.view_cleanup().result().status_code == 202
+
+    def testRevs(self):
+        # put some docs
+        self.db['one'] = self.test_doc
+        self.db['two'] = self.test_otherdoc
+        # get their revisions
+        revs = defaultdict(list)
+        for doc in self.db:
+            revs[doc['id']].append(doc['value']['rev'])
+        assert self.db.missing_revs(revs).result().status_code == 200
+        assert self.db.revs_diff(revs).result().status_code == 200
 
     def tearDown(self):
         assert self.db.delete().result().status_code == 200

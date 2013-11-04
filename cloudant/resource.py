@@ -44,9 +44,6 @@ class Resource(object):
         else:
             return self.uri
 
-    def _validate(self, session, response):
-        validate(response)
-
     def _make_request(self, method, path='', **kwargs):
         # kwargs supercede self.opts
         opts = copy.copy(self.opts)
