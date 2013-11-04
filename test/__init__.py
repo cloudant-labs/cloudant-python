@@ -1,4 +1,4 @@
-import divan
+import cloudant
 import unittest
 import os
 
@@ -26,7 +26,7 @@ class ConnectionTest(ResourceTest):
 
     def setUp(self):
         super(ConnectionTest, self).setUp()
-        self.conn = divan.Connection(self.uri)
+        self.conn = cloudant.Connection(self.uri)
 
     def testAllDbs(self):
         self.conn.all_dbs()
@@ -60,7 +60,7 @@ class DatabaseTest(ResourceTest):
 
     def setUp(self):
         super(DatabaseTest, self).setUp()
-        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         self.db.put().result()
 
     def testGet(self):
@@ -94,7 +94,7 @@ class DocumentTest(ResourceTest):
 
     def setUp(self):
         super(DocumentTest, self).setUp()
-        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         self.db.put().result()
         self.doc = self.db.document(self.doc_name)
 
@@ -130,7 +130,7 @@ class ViewTest(ResourceTest):
 
     def setUp(self):
         super(ViewTest, self).setUp()
-        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         self.db.put().result()
         self.doc = self.db.document(self.doc_name)
 
@@ -151,7 +151,7 @@ class ErrorTest(ResourceTest):
 
     def setUp(self):
         super(ErrorTest, self).setUp()
-        self.db = divan.Database('/'.join([self.uri, self.db_name]))
+        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
 
     def testMissing(self):
         try:
