@@ -1,4 +1,5 @@
 from .resource import Resource
+import json
 
 
 class View(Resource):
@@ -22,5 +23,13 @@ class View(Resource):
     """
 
     def __iter__(self):
-        # allow indexes to be used as iterators
-        return self.get().result().json()['rows'].__iter__()
+        response = self.get(stream=True).result()
+        for line in response.iter_lines():
+            if line:
+                if line[-1] == ',':
+                    line = line[:-1]
+                try:
+                    yield json.loads(line)
+                except ValueError:
+                    # if we can't decode a line, ignore it
+                    pass
