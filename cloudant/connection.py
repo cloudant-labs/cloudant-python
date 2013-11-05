@@ -1,5 +1,6 @@
 from .resource import Resource
 from .database import Database
+import urlparse
 
 
 class Connection(Resource):
@@ -14,6 +15,8 @@ class Connection(Resource):
     """
 
     def __init__(self, uri="http://localhost:5984", **kwargs):
+        if not urlparse.urlparse(uri).scheme:
+            uri = "https://%s.cloudant.com" % uri
         super(Connection, self).__init__(uri, **kwargs)
 
     def database(self, name, **kwargs):
