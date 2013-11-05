@@ -6,6 +6,6 @@ services:
 before_script:
   - pip install coverage coveralls
 script:
-  - coverage run --source=cloudant-python setup.py test
+  - coverage run --source=cloudant setup.py test
 after_success:
   - coveralls
