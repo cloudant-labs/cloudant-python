@@ -144,7 +144,13 @@ class DocumentTest(ResourceTest):
         assert self.doc.merge(self.test_otherdoc).result().status_code == 201
 
     def testView(self):
-        self.doc.view('_view', 'derp')
+        self.doc.view('_view/derp')
+        self.doc.index('derp')
+        self.doc.search('derp')
+
+    def testList(self):
+        assert self.doc.list('herp', 'derp').result().status_code == 404
+        assert self.doc.show('herp', 'derp').result().status_code == 404
 
     def testAttachment(self):
         self.doc.attachment('file')
