@@ -1,5 +1,8 @@
 # Cloudant.py [![Build Status](https://travis-ci.org/cloudant-labs/cloudant-python.png)](https://travis-ci.org/cloudant-labs/cloudant-python) [![Coverage Status](https://coveralls.io/repos/cloudant-labs/cloudant-python/badge.png)](https://coveralls.io/r/cloudant-labs/cloudant-python) [![PyPi version](https://pypip.in/v/cloudant/badge.png)](https://crate.io/packages/cloudant/) [![PyPi downloads](https://pypip.in/d/cloudant/badge.png)](https://crate.io/packages/cloudant/)
 
+[wiki]: http://en.wikipedia.org/wiki/Cloudant.py_(furniture\)
+[wiki_img]: http://upload.wikimedia.org/wikipedia/commons/e/ea/FrancisLevettLiotard.jpg
+
 An effortless Cloudant / CouchDB interface for Python.
 
 ## Install
@@ -124,9 +127,13 @@ If you use one object to create another, the child will inherit the parents' set
     - [Document.attachment](#Document.attachment)
     - [Document.delete](#Document.delete)
     - [Document.get](#Document.get)
+    - [Document.index](#Document.index)
+    - [Document.list](#Document.list)
     - [Document.merge](#Document.merge)
     - [Document.post](#Document.post)
     - [Document.put](#Document.put)
+    - [Document.search](#Document.search)
+    - [Document.show](#Document.show)
     - [Document.view](#Document.view)
 - [View](#View)
     - [View.delete](#View.delete)
@@ -345,6 +352,28 @@ Delete the given revision of the current document. For example:
 Make a GET request against the object's URI joined
 with `path`. `kwargs` are passed directly to Requests.
 
+<a name="Document.index"></a>
+#### Document.index(function, **kwargs)
+
+Create a `View` object referencing the secondary index at `_view/{function}`. For example:
+
+    view = doc.index('index-name')
+    # refers to /DB/_design/DOC/_view/index-name
+
+For more on secondary indices, see
+[Querying a View](http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view)
+
+<a name="Document.list"></a>
+#### Document.list(function, index, **kwargs)
+
+Make a GET request to the list function at `_list/{function}/{index}`. For example:
+
+    future = doc.list('list-name', 'index-name')
+    # refers to /DB/_design/DOC/_list/list-name/index-name
+
+For more details on list functions, see
+[Querying List Functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions).
+
 <a name="Document.merge"></a>
 #### Document.merge(change, **kwargs)
 
@@ -371,12 +400,34 @@ with `path`.
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
 
+<a name="Document.search"></a>
+#### Document.search(function, **kwargs)
+
+Creates a `View` object referencing the search index at `_search/{function}`. For example:
+
+    view = doc.search('index-name')
+    # refers to /DB/_design/DOC/_search/search-name
+
+For more details on search indexes, see
+[Searching for documents using Lucene queries](http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries)
+
+<a name="Document.show"></a>
+#### Document.show(function, id, **kwargs)
+
+Make a GET request to the show function at `_show/{function}/{id}`. For example:
+
+    future = doc.show('show-name', 'document-id')
+    # refers to /DB/_design/DOC/_show/show-name/document-id
+
+For more details on show functions, see
+[Querying Show Functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions).
+
 <a name="Document.view"></a>
-#### Document.view(method, function, **kwargs)
+#### Document.view(path, **kwargs)
 
-Create a `View` object by joining `method` and `function`. For example:
+Create a `View` object referencing the function at `path`. For example:
 
-    view = doc.view('_view', 'index-name')
+    view = doc.view('_view/index-name')
     # refers to /DB/_design/DOC/_view/index-name
 
 <a name="View"></a>
