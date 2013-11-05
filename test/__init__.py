@@ -78,7 +78,9 @@ class DatabaseTest(ResourceTest):
     def setUp(self):
         super(DatabaseTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
-        assert self.db.put().result().status_code == 201
+        status = self.db.put().result().status_code
+        print status
+        assert status == 201
 
     def testGet(self):
         assert self.db.get().result().status_code == 200
@@ -107,8 +109,8 @@ class DatabaseTest(ResourceTest):
 
     def testRevs(self):
         # put some docs
-        self.db['one'] = self.test_doc
-        self.db['two'] = self.test_otherdoc
+        assert self.db.save_docs(
+            self.test_doc, self.test_otherdoc).result().status_code == 201
         # get their revisions
         revs = defaultdict(list)
         for doc in self.db:
