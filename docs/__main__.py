@@ -69,6 +69,7 @@ with open(os.path.join(maindir,'readme.md'), 'w') as f:
             'Connection', 
             'Database',
             'Document',
+            'Design',
             'View',
             'Attachment'
         ]

@@ -131,6 +131,18 @@ If you use one object to create another, the child will inherit the parents' set
     - [Document.merge](#Document.merge)
     - [Document.post](#Document.post)
     - [Document.put](#Document.put)
+- [Design](#Design)
+    - [Design.attachment](#Design.attachment)
+    - [Design.delete](#Design.delete)
+    - [Design.get](#Design.get)
+    - [Design.index](#Design.index)
+    - [Design.list](#Design.list)
+    - [Design.merge](#Design.merge)
+    - [Design.post](#Design.post)
+    - [Design.put](#Design.put)
+    - [Design.search](#Design.search)
+    - [Design.show](#Design.show)
+    - [Design.view](#Design.view)
 - [View](#View)
     - [View.delete](#View.delete)
     - [View.get](#View.get)
@@ -381,6 +393,111 @@ with `path`.
 `kwargs['params']` are turned into JSON before being
 passed to Requests. If you want to indicate the message
 body without it being modified, use `kwargs['data']`.
+
+<a name="Design"></a>
+### Design(uri, **kwargs)
+
+Connection to a design document, which stores custom indexes and other database functions.
+
+Learn more about design documents from the [Cloudant docs](http://docs.cloudant.com/api/design.html)
+
+<a name="Design.attachment"></a>
+#### Design.attachment(name, **kwargs)
+
+Create an `Attachment` object from `name` and the settings
+for the current database.
+
+<a name="Design.delete"></a>
+#### Design.delete(rev, **kwargs)
+
+Delete the given revision of the current document. For example:
+
+    rev = doc.get().result().json()['_rev']
+    doc.delete(rev)
+
+<a name="Design.get"></a>
+#### Design.get(path, **kwargs)
+
+Make a GET request against the object's URI joined
+with `path`. `kwargs` are passed directly to Requests.
+
+<a name="Design.index"></a>
+#### Design.index(function, **kwargs)
+
+Create a `View` object referencing the secondary index at `_view/{function}`. For example:
+
+    view = doc.index('index-name')
+    # refers to /DB/_design/DOC/_view/index-name
+
+For more on secondary indices, see
+[Querying a View](http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view)
+
+<a name="Design.list"></a>
+#### Design.list(function, index, **kwargs)
+
+Make a GET request to the list function at `_list/{function}/{index}`. For example:
+
+    future = doc.list('list-name', 'index-name')
+    # refers to /DB/_design/DOC/_list/list-name/index-name
+
+For more details on list functions, see
+[Querying List Functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions).
+
+<a name="Design.merge"></a>
+#### Design.merge(change, **kwargs)
+
+Merge `change` into the document,
+and then `PUT` the updated document back to the server.
+
+<a name="Design.post"></a>
+#### Design.post(path, **kwargs)
+
+Make a POST request against the object's URI joined
+with `path`.
+
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
+
+<a name="Design.put"></a>
+#### Design.put(path, **kwargs)
+
+Make a PUT request against the object's URI joined
+with `path`.
+
+`kwargs['params']` are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use `kwargs['data']`.
+
+<a name="Design.search"></a>
+#### Design.search(function, **kwargs)
+
+Creates a `View` object referencing the search index at `_search/{function}`. For example:
+
+    view = doc.search('index-name')
+    # refers to /DB/_design/DOC/_search/search-name
+
+For more details on search indexes, see
+[Searching for documents using Lucene queries](http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries)
+
+<a name="Design.show"></a>
+#### Design.show(function, id, **kwargs)
+
+Make a GET request to the show function at `_show/{function}/{id}`. For example:
+
+    future = doc.show('show-name', 'document-id')
+    # refers to /DB/_design/DOC/_show/show-name/document-id
+
+For more details on show functions, see
+[Querying Show Functions](http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions).
+
+<a name="Design.view"></a>
+#### Design.view(path, **kwargs)
+
+Create a `View` object referencing the function at `path`. For example:
+
+    view = doc.view('_view/index-name')
+    # refers to /DB/_design/DOC/_view/index-name
 
 <a name="View"></a>
 ### View(uri, **kwargs)
