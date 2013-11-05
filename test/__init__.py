@@ -29,6 +29,10 @@ class ConnectionTest(ResourceTest):
         super(ConnectionTest, self).setUp()
         self.conn = cloudant.Connection(self.uri)
 
+    def testCloudant(self):
+        conn = cloudant.Connection('garbados')
+        assert conn.uri == "https://garbados.cloudant.com"
+
     def testAllDbs(self):
         assert self.conn.all_dbs().result().status_code == 200
 
@@ -145,6 +149,22 @@ class DocumentTest(ResourceTest):
         assert self.doc.put(params=self.test_doc).result().status_code == 201
         assert self.doc.merge(self.test_otherdoc).result().status_code == 201
 
+    def testAttachment(self):
+        self.doc.attachment('file')
+
+    def tearDown(self):
+        assert self.db.delete().result().status_code == 200
+
+
+class DesignTest(ResourceTest):
+
+    def setUp(self):
+        super(DesignTest, self).setUp()
+        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
+        assert self.db.put().result().status_code == 201
+        self.doc = self.db.design('ddoc')
+        assert self.doc.put(params=self.test_doc).result().status_code == 201
+
     def testView(self):
         self.doc.view('_view/derp')
         self.doc.index('derp')
@@ -153,9 +173,6 @@ class DocumentTest(ResourceTest):
     def testList(self):
         assert self.doc.list('herp', 'derp').result().status_code == 404
         assert self.doc.show('herp', 'derp').result().status_code == 404
-
-    def testAttachment(self):
-        self.doc.attachment('file')
 
     def tearDown(self):
         assert self.db.delete().result().status_code == 200

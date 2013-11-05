@@ -1,5 +1,6 @@
 from .resource import Resource
 from .document import Document
+from .design import Design
 from .view import View
 
 
@@ -17,6 +18,16 @@ class Database(Resource):
         """
         opts = dict(self.opts.items() + kwargs.items())
         return Document(self._make_url(name), session=self._session, **opts)
+
+    def design(self, name, **kwargs):
+        """
+        Create a `Design` object from `name`, like so:
+
+            db.design('test')
+            # refers to DB/_design/test
+        """
+        opts = dict(self.opts.items() + kwargs.items())
+        return Design(self._make_url('/'.join(['_design', name])), session=self._session, **opts)
 
     def __getitem__(self, name):
         """Shortcut to `Database.document`."""
