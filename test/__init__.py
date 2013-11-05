@@ -84,7 +84,7 @@ class DatabaseTest(ResourceTest):
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         status = self.db.put().result().status_code
         print status
-        assert status == 201
+        assert status in [201, 412]
 
     def testGet(self):
         assert self.db.get().result().status_code == 200
