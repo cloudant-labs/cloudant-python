@@ -10,29 +10,31 @@ An effortless Cloudant / CouchDB interface for Python.
 ## Install
 
     pip install cloudant
-    
+
 ## Usage
 
 Cloudant-Python is an asynchronous wrapper around Python [Requests](http://www.python-requests.org/en/latest/) for interacting with CouchDB or Cloudant instances. Check it out:
 
-    import cloudant
+```python
+import cloudant
 
-    # connect to your account
-    # in this case, https://garbados.cloudant.com
-    account = cloudant.Account('garbados')
-    
-    # login, so we can make changes
-    login = account.login('garbados', PASSWORD)
-    assert login.result().status_code == 200
+# connect to your account
+# in this case, https://garbados.cloudant.com
+account = cloudant.Account('garbados')
 
-    # create a database object
-    db = account.database('test')
-    
-    # now, create the database on the server
-    future = db.put()
-    response = future.result()
-    print response.json()
-    # {'ok': True}
+# login, so we can make changes
+login = account.login('garbados', PASSWORD)
+assert login.result().status_code == 200
+
+# create a database object
+db = account.database('test')
+
+# now, create the database on the server
+future = db.put()
+response = future.result()
+print response.json()
+# {'ok': True}
+```
 
 See the [API reference](http://cloudant-labs.github.io/cloudant-python/#api) for all the details you could ever want.
 
@@ -40,58 +42,66 @@ See the [API reference](http://cloudant-labs.github.io/cloudant-python/#api) for
 
 Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
 
-    import cloudant
+```python
+import cloudant
 
-    account = cloudant.Account('garbados')
-    db = account.database('test')
-    same_db = account['test']
-    assert db.uri == same_db.uri
-    # True
+account = cloudant.Account('garbados')
+db = account.database('test')
+same_db = account['test']
+assert db.uri == same_db.uri
+# True
+```
 
 Cloudant-Python expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as `__getitem__`, act as Pythonic shortcuts to those methods. For example:
 
-    import cloudant
+```python
+import cloudant
 
-    account = cloudant.Account('garbados')
-    db = account.database('test')
-    doc = db.document('test_doc')
-    # create the document
-    resp = doc.put({
-      '_id': 'hello_world',
-      'herp': 'derp'
-      }).result()
-    # delete the document
-    rev = resp.json()['_rev']
-    doc.delete(rev).result()
-    # but this also creates a document
-    db['hello_world'] = {'herp': 'derp'}
+account = cloudant.Account('garbados')
+db = account.database('test')
+doc = db.document('test_doc')
+# create the document
+resp = doc.put({
+  '_id': 'hello_world',
+  'herp': 'derp'
+  }).result()
+# delete the document
+rev = resp.json()['_rev']
+doc.delete(rev).result()
+# but this also creates a document
+db['hello_world'] = {'herp': 'derp'}
+```
 
 If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. For example:
 
-    import cloudant
+```python
+import cloudant
 
-    account = cloudant.Account('garbados')
-    db = account.database('test')
-    view = db.all_docs() # returns all docs in the database
-    for doc in db:
-      # iterates over every doc in the database
-      pass
-    for doc in view:
-      # and so does this!
-      pass
+account = cloudant.Account('garbados')
+db = account.database('test')
+view = db.all_docs() # returns all docs in the database
+for doc in db:
+  # iterates over every doc in the database
+  pass
+for doc in view:
+  # and so does this!
+  pass
+```
 
 ### Asynchronous
 
 HTTP request methods like `get` and `post` return `Future` objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the `result` method, like so:
 
-    import cloudant
+```python
+import cloudant
 
-    account = cloudant.Account()
-    db = account['test']
-    future = db.put()
-    response = future.result()
-    print db.get().result().json()
-    # {'db_name': 'test', ...}
+account = cloudant.Account()
+db = account['test']
+future = db.put()
+response = future.result()
+print db.get().result().json()
+# {'db_name': 'test', ...}
+```
 
 As a result, any methods which must make an HTTP request return a `Future`.
 
@@ -99,18 +109,20 @@ As a result, any methods which must make an HTTP request return a `Future`.
 
 If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Account.database` to inherit cookies and other settings from the `Account` object. For example:
 
-    import cloudant
+```python
+import cloudant
 
-    account = cloudant.Account('garbados')
-    db = account.database('test')
-    doc = db.document('test_doc')
+account = cloudant.Account('garbados')
+db = account.database('test')
+doc = db.document('test_doc')
 
-    url = 'https://garbados.cloudant.com'
-    path = '/test/test_doc'
-    otherdoc = cloudant.Document(url + path)
-    
-    assert doc.uri == otherdoc.uri
-    # True
+url = 'https://garbados.cloudant.com'
+path = '/test/test_doc'
+otherdoc = cloudant.Document(url + path)
+
+assert doc.uri == otherdoc.uri
+# True
+```
 
 ## Testing
 
@@ -125,7 +137,7 @@ The API reference is automatically generated from the docstrings of each class a
     pip install -e cloudant[docs]
 
 Then, in Cloudant-Python's root directory, do this:
-  
+
     python docs
 
 Note: docstrings are in [Markdown](http://daringfireball.net/projects/markdown/).
