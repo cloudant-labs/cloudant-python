@@ -1,4 +1,5 @@
 from requests_futures.sessions import FuturesSession
+import urlparse
 import json
 import copy
 
@@ -17,6 +18,7 @@ class Resource(object):
     """
     def __init__(self, uri, **kwargs):
         self.uri = uri
+        self.uri_parts = urlparse.urlparse(self.uri)
 
         if 'session' in kwargs.keys():
             self._session = kwargs['session']
@@ -40,9 +42,19 @@ class Resource(object):
     def _make_url(self, path=''):
         """Joins the uri, and optional path"""
         if path:
-            return '/'.join([self.uri, path])
+            # if given a full URL, use that instead
+            if urlparse.urlparse(path).scheme:
+                return path
+            else:
+                return '/'.join([self.uri, path])
         else:
             return self.uri
+
+    def _reset_path(self, path):
+        parts = list(self.uri_parts)
+        parts[2] = path
+        url = urlparse.urlunparse(parts)
+        return url
 
     def _make_request(self, method, path='', **kwargs):
         # kwargs supercede self.opts
@@ -53,6 +65,7 @@ class Resource(object):
             if 'params' in opts:
                 opts['data'] = json.dumps(opts['params'])
                 del kwargs['params']
+        # make the request
         future = getattr(
             self._session,
             method)(
@@ -60,6 +73,23 @@ class Resource(object):
                     path),
                 **opts)
         return future
+
+    def session(self, **kwargs):
+        """Get current user's authentication and authorization status."""
+        return self.get(self._reset_path('_session'), **kwargs)
+
+    def login(self, username, password, **kwargs):
+        """Authenticate the connection via cookie."""
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+
+    def logout(self, **kwargs):
+        """De-authenticate the connection's cookie."""
+        return self.delete(self._reset_path('_session'), **kwargs)
 
     def get(self, path='', **kwargs):
         """

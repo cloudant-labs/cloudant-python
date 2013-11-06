@@ -171,8 +171,9 @@ class DesignTest(ResourceTest):
         self.doc.search('derp')
 
     def testList(self):
+        # todo: test on actual list and show functions
         assert self.doc.list('herp', 'derp').result().status_code == 404
-        assert self.doc.show('herp', 'derp').result().status_code == 404
+        assert self.doc.show('herp', 'derp').result().status_code == 500
 
     def tearDown(self):
         assert self.db.delete().result().status_code == 200
