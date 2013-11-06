@@ -32,22 +32,6 @@ class Account(Resource):
         """List all databases."""
         return self.get('_all_dbs', **kwargs)
 
-    def session(self, **kwargs):
-        """Get current user's authentication and authorization status."""
-        return self.get('_session', **kwargs)
-
-    def login(self, username, password, **kwargs):
-        """Authenticate the account via cookie."""
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-        data = "name=%s&password=%s" % (username, password)
-        return self.post('_session', headers=headers, data=data, **kwargs)
-
-    def logout(self, **kwargs):
-        """De-authenticate the account's cookie."""
-        return self.delete('_session', **kwargs)
-
     def active_tasks(self, **kwargs):
         """List replication, compaction, and indexer tasks currently running."""
         return self.get('_active_tasks', **kwargs)
