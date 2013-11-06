@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title></title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div id="jump_to">
+    Jump To &hellip;
+    <div id="jump_wrapper">
+      <div id="jump_page">
+        <a class="source" href="#">Home</a>
+        <a class="source" href="#api">API Reference</a>
+        
+        <a class="source" href="#Connection">Connection</a>
+        
+        <a class="source" href="#Database">Database</a>
+        
+        <a class="source" href="#Document">Document</a>
+        
+        <a class="source" href="#Design">Design</a>
+        
+        <a class="source" href="#View">View</a>
+        
+        <a class="source" href="#Attachment">Attachment</a>
+        
+      </div>
+    </div>
+  </div>
+  <div class='section'>
+    <div class='docs'>
+      <h1>Cloudant-Python</h1>
+<p><a href="https://travis-ci.org/cloudant-labs/cloudant-python"><img alt="Build Status" src="https://travis-ci.org/cloudant-labs/cloudant-python.png" /></a> <a href="https://coveralls.io/r/cloudant-labs/cloudant-python"><img alt="Coverage Status" src="https://coveralls.io/repos/cloudant-labs/cloudant-python/badge.png" /></a> <a href="https://crate.io/packages/cloudant/"><img alt="PyPi version" src="https://pypip.in/v/cloudant/badge.png" /></a> <a href="https://crate.io/packages/cloudant/"><img alt="PyPi downloads" src="https://pypip.in/d/cloudant/badge.png" /></a></p>
+<p>An effortless Cloudant / CouchDB interface for Python.</p>
+<h2>Install</h2>
+<pre><code>pip install cloudant
+</code></pre>
+<h2>Usage</h2>
+<p>Cloudant-Python is an asynchronous wrapper around Python <a href="http://www.python-requests.org/en/latest/">Requests</a> for interacting with CouchDB or Cloudant instances. Check it out:</p>
+<pre><code>import cloudant
+
+# create a connection object
+conn = cloudant.Connection()
+# create a database object
+db = conn.database('test')
+# now, create the database on the server
+future = db.put()
+response = future.result()
+print response.json()
+# {'ok': True}
+</code></pre>
+<h3>Philosophy</h3>
+<p>Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
+<pre><code>import cloudant
+
+conn = cloudant.Connection()
+db = conn.database('test')
+same_db = conn['test']
+assert db.uri == same_db.uri
+# True
+</code></pre>
+<p>Cloudant-Python expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as <code>__getitem__</code>, act as Pythonic shortcuts to those methods. For example:</p>
+<pre><code>import cloudant
+
+conn = cloudant.Connection()
+db = conn.database('test')
+doc = db.document('test_doc')
+# create the document
+resp = doc.put({
+  '_id': 'hello_world',
+  'herp': 'derp'
+  }).result()
+# delete the document
+rev = resp.json()['_rev']
+doc.delete(rev).result()
+# but this also creates a document
+db['hello_world'] = {'herp': 'derp'}
+</code></pre>
+<p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. For example:</p>
+<pre><code>import cloudant
+
+conn = cloudant.Connection()
+db = conn.database('test')
+view = db.all_docs() # returns all docs in the database
+for doc in db:
+  # iterates over every doc in the database
+  pass
+for doc in view:
+  # and so does this!
+  pass
+</code></pre>
+<h3>Asynchronous</h3>
+<p>HTTP request methods like <code>get</code> and <code>post</code> return <code>Future</code> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the <code>result</code> method, like so:</p>
+<pre><code>import cloudant
+
+conn = cloudant.Connection()
+db = conn['test']
+future = db.put()
+response = future.result()
+print db.get().result().json()
+# {'db_name': 'test', ...}
+</code></pre>
+<p>As a result, any methods which must make an HTTP request return a <code>Future</code>.</p>
+<h3>Option Inheritance</h3>
+<p>If you use one object to create another, the child will inherit the parents' settings. So, you can create a <code>Database</code> object explicitly, or use <code>Connection.database</code> to inherit cookies and other settings from the <code>Connection</code> object. For example:</p>
+<pre><code>import cloudant
+
+conn = cloudant.Connection('garbados')
+db = conn.database('test')
+doc = db.document('test_doc')
+
+url = 'https://garbados.cloudant.com'
+path = '/test/test_doc'
+otherdoc = cloudant.Document(url + path)
+
+assert doc.uri == otherdoc.uri
+# True
+</code></pre>
+<h2>Testing</h2>
+<p>To run Cloudant-Python's tests, just do:</p>
+<pre><code>python setup.py test
+</code></pre>
+<h2>Documentation</h2>
+<p>The API reference is automatically generated from the docstrings of each class and its methods. To install Cloudant-Python with the necessary extensions to build the docs, do this:</p>
+<pre><code>pip install -e cloudant[docs]
+</code></pre>
+<p>Then, in Cloudant-Python's root directory, do this:</p>
+<pre><code>python docs
+</code></pre>
+<p>Note: docstrings are in <a href="http://daringfireball.net/projects/markdown/">Markdown</a>.</p>
+<h2>License</h2>
+<p><a href="http://opensource.org/licenses/MIT">MIT</a>, yo.</p>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='api'>
+    <div class='docs'>
+      <h1>API Reference</h1>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  
+  <div class='section' id="Connection">
+    <div class='docs'>
+      <h2>Connection</h2>
+      <p>A connection to a Cloudant or CouchDB instance.</p>
+<pre><code>connection = cloudant.Connection()
+connection.login(USERNAME, PASSWORD).result()
+print connection.get().result().json()
+# {"couchdb": "Welcome", ...}
+</code></pre>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='Connection-active_tasks'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-active_tasks'>#</a>
+        </div>
+        <h3>active_tasks</h3>
+        <p>List replication, compaction, and indexer tasks currently running.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def active_tasks(self, **kwargs):
+        
+        return self.get('_active_tasks', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-all_dbs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-all_dbs'>#</a>
+        </div>
+        <h3>all_dbs</h3>
+        <p>List all databases.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def all_dbs(self, **kwargs):
+        
+        return self.get('_all_dbs', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-database'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-database'>#</a>
+        </div>
+        <h3>database</h3>
+        <p>Create a <code>Database</code> object prefixed with this connection's URL.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def database(self, name, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return Database(self._make_url(name), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Make a DELETE request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, path='', **kwargs):
+        
+        return self._make_request('delete', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-login'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post('_session', headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete('_session', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-replicate'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-replicate'>#</a>
+        </div>
+        <h3>replicate</h3>
+        <p>Begin a replication job.
+<code>opts</code> contains replication options such as whether the replication
+should create the target (<code>create_target</code>) or whether the replication
+is continuous (<code>continuous</code>).</p>
+<p>Note: unless continuous, will not return until the job is finished.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def replicate(self, source, target, opts={}, **kwargs):
+        
+
+        params = {
+            'source': source,
+            'target': target
+        }
+
+        params.update(opts)
+        if 'params' in kwargs:
+            params.update(kwargs['params'])
+            del kwargs['params']
+
+        return self.post('_replicate', params=params, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get('_session', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Connection-uuids'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Connection-uuids'>#</a>
+        </div>
+        <h3>uuids</h3>
+        <p>Generate an arbitrary number of UUIDs.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def uuids(self, count=1, **kwargs):
+        
+        params = dict(count=count)
+        return self.get('_uuids', params=params, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+  <div class='section' id="Database">
+    <div class='docs'>
+      <h2>Database</h2>
+      <p>Connection to a specific database.</p>
+<p>Learn more about the raw API from the <a href="http://docs.cloudant.com/api/database.html">Cloudant docs</a>.</p>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='Database-all_docs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-all_docs'>#</a>
+        </div>
+        <h3>all_docs</h3>
+        <p>Return a <code>View</code> object referencing all documents in the database.
+You can treat it like an iterator:</p>
+<pre><code>for doc in db.all_docs():
+    print doc
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def all_docs(self, **kwargs):
+        
+        return View(self._make_url('_all_docs'), session=self._session, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-changes'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-changes'>#</a>
+        </div>
+        <h3>changes</h3>
+        <p>Gets a list of the changes made to the database.
+This can be used to monitor for update and modifications to the database
+for post processing or synchronization.</p>
+<p>Automatically adjusts the request to handle the different response behavior
+of polling, longpolling, and continuous modes.</p>
+<p>For more information about the <code>_changes</code> feed, see
+<a href="http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes">the docs</a>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def changes(self, **kwargs):
+        
+        if 'params' in kwargs:
+            if 'feed' in kwargs['params']:
+                if kwargs['params']['feed'] == 'continuous':
+                    kwargs['stream'] = True
+
+        return self.get('_changes', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Make a DELETE request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, path='', **kwargs):
+        
+        return self._make_request('delete', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-design'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-design'>#</a>
+        </div>
+        <h3>design</h3>
+        <p>Create a <code>Design</code> object from <code>name</code>, like so:</p>
+<pre><code>db.design('test')
+# refers to DB/_design/test
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def design(self, name, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return Design(self._make_url('/'.join(['_design', name])), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-document'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-document'>#</a>
+        </div>
+        <h3>document</h3>
+        <p>Create a <code>Document</code> object from <code>name</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def document(self, name, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return Document(self._make_url(name), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-missing_revs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-missing_revs'>#</a>
+        </div>
+        <h3>missing_revs</h3>
+        <p>Refers to <a href="http://docs.cloudant.com/api/database.html#retrieving-missing-revisions">this method</a>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def missing_revs(self, revs, **kwargs):
+        
+        return self.post('_missing_revs', params=revs, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-revs_diff'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-revs_diff'>#</a>
+        </div>
+        <h3>revs_diff</h3>
+        <p>Refers to <a href="http://docs.cloudant.com/api/database.html#retrieving-differences-between-revisions">this method</a></p>
+      </div>
+      <div class='code'>
+        <pre><code>    def revs_diff(self, revs, **kwargs):
+        
+        return self.post('_revs_diff', params=revs, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-save_docs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-save_docs'>#</a>
+        </div>
+        <h3>save_docs</h3>
+        <p>Save many docs, all at once. Each <code>doc</code> argument must be a dict, like this:</p>
+<pre><code>    db.save_docs({...}, {...}, {...})
+    # saves all documents in one HTTP request
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def save_docs(self, *docs, **kwargs):
+        
+        params = {
+            'docs': docs
+        }
+        return self.post('_bulk_docs', params=params, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-view_cleanup'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-view_cleanup'>#</a>
+        </div>
+        <h3>view_cleanup</h3>
+        <p>Cleans up the cached view output on disk for a given view. For example:</p>
+<pre><code>print db.view_cleanup().result().json()
+# {'ok': True}
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def view_cleanup(self, **kwargs):
+        
+        return self.post('_view_cleanup', **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+  <div class='section' id="Document">
+    <div class='docs'>
+      <h2>Document</h2>
+      <p>Connection to a specific document.</p>
+<p>Learn more about the raw API from the <a href="http://docs.cloudant.com/api/documents.html">Cloudant docs</a></p>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='Document-attachment'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-attachment'>#</a>
+        </div>
+        <h3>attachment</h3>
+        <p>Create an <code>Attachment</code> object from <code>name</code> and the settings
+for the current database.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def attachment(self, name, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return Attachment(self._make_url(name), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Delete the given revision of the current document. For example:</p>
+<pre><code>rev = doc.get().result().json()['_rev']
+doc.delete(rev)
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, rev, **kwargs):
+        
+        return super(Document, self).delete(params={'rev': rev}, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-merge'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-merge'>#</a>
+        </div>
+        <h3>merge</h3>
+        <p>Merge <code>change</code> into the document,
+and then <code>PUT</code> the updated document back to the server.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def merge(self, change, **kwargs):
+        
+        doc = self.get().result().json()
+        doc.update(change)
+        return self.put(params=doc, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+  <div class='section' id="Design">
+    <div class='docs'>
+      <h2>Design</h2>
+      <p>Connection to a design document, which stores custom indexes and other database functions.</p>
+<p>Learn more about design documents from the <a href="http://docs.cloudant.com/api/design.html">Cloudant docs</a></p>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='Design-attachment'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-attachment'>#</a>
+        </div>
+        <h3>attachment</h3>
+        <p>Create an <code>Attachment</code> object from <code>name</code> and the settings
+for the current database.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def attachment(self, name, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return Attachment(self._make_url(name), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Delete the given revision of the current document. For example:</p>
+<pre><code>rev = doc.get().result().json()['_rev']
+doc.delete(rev)
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, rev, **kwargs):
+        
+        return super(Document, self).delete(params={'rev': rev}, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-index'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-index'>#</a>
+        </div>
+        <h3>index</h3>
+        <p>Create a <code>View</code> object referencing the secondary index at <code>_view/{function}</code>. For example:</p>
+<pre><code>view = doc.index('index-name')
+# refers to /DB/_design/DOC/_view/index-name
+</code></pre>
+<p>For more on secondary indices, see
+<a href="http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view">Querying a View</a></p>
+      </div>
+      <div class='code'>
+        <pre><code>    def index(self, function, **kwargs):
+        
+        return self.view('/'.join(['_view', function]), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-list'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-list'>#</a>
+        </div>
+        <h3>list</h3>
+        <p>Make a GET request to the list function at <code>_list/{function}/{index}</code>. For example:</p>
+<pre><code>future = doc.list('list-name', 'index-name')
+# refers to /DB/_design/DOC/_list/list-name/index-name
+</code></pre>
+<p>For more details on list functions, see
+<a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions">Querying List Functions</a>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def list(self, function, index, **kwargs):
+        
+        return self.get(self._make_url('/'.join(['_list', function, index])), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-merge'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-merge'>#</a>
+        </div>
+        <h3>merge</h3>
+        <p>Merge <code>change</code> into the document,
+and then <code>PUT</code> the updated document back to the server.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def merge(self, change, **kwargs):
+        
+        doc = self.get().result().json()
+        doc.update(change)
+        return self.put(params=doc, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-search'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-search'>#</a>
+        </div>
+        <h3>search</h3>
+        <p>Creates a <code>View</code> object referencing the search index at <code>_search/{function}</code>. For example:</p>
+<pre><code>view = doc.search('index-name')
+# refers to /DB/_design/DOC/_search/search-name
+</code></pre>
+<p>For more details on search indexes, see
+<a href="http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries">Searching for documents using Lucene queries</a></p>
+      </div>
+      <div class='code'>
+        <pre><code>    def search(self, function, **kwargs):
+        
+        return self.view('/'.join(['_search', function]), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-show'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-show'>#</a>
+        </div>
+        <h3>show</h3>
+        <p>Make a GET request to the show function at <code>_show/{function}/{id}</code>. For example:</p>
+<pre><code>future = doc.show('show-name', 'document-id')
+# refers to /DB/_design/DOC/_show/show-name/document-id
+</code></pre>
+<p>For more details on show functions, see
+<a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions">Querying Show Functions</a>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def show(self, function, id, **kwargs):
+        
+        return self.get(self._make_url('/'.join(['_show', function, id])), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-view'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-view'>#</a>
+        </div>
+        <h3>view</h3>
+        <p>Create a <code>View</code> object referencing the function at <code>path</code>. For example:</p>
+<pre><code>view = doc.view('_view/index-name')
+# refers to /DB/_design/DOC/_view/index-name
+</code></pre>
+      </div>
+      <div class='code'>
+        <pre><code>    def view(self, path, **kwargs):
+        
+        opts = dict(self.opts.items() + kwargs.items())
+        return View(self._make_url(path), session=self._session, **opts)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+  <div class='section' id="View">
+    <div class='docs'>
+      <h2>View</h2>
+      <p>Methods for design document indexes and special methods.
+Different kinds of indexes / methods will behave differently, so here are helpful docs:</p>
+<ul>
+<li><a href="http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries">Lucene search indexes</a></li>
+<li><a href="http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view">Secondary indexes / "views"</a></li>
+<li><a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions">List functions</a></li>
+<li><a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions">Show functions</a></li>
+</ul>
+<p>Then, you just use basic HTTP methods to perform queries, like this:</p>
+<pre><code>view.get(params=QUERY_ARGUMENTS)
+</code></pre>
+<p>Remember, before you can query an index, you have to make sure it's in your database.
+See <a href="http://docs.cloudant.com/api/design-documents-get-put-delete-copy.html#creating-or-updating-a-design-document">these docs</a>
+for how to do that.</p>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='View-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#View-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Make a DELETE request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, path='', **kwargs):
+        
+        return self._make_request('delete', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='View-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#View-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='View-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#View-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='View-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#View-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+  <div class='section' id="Attachment">
+    <div class='docs'>
+      <h2>Attachment</h2>
+      <p>Attachment methods for a single document</p>
+    </div>
+  </div>
+  <div class='clearall'>
+    
+    <div class='section' id='Attachment-delete'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-delete'>#</a>
+        </div>
+        <h3>delete</h3>
+        <p>Make a DELETE request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def delete(self, path='', **kwargs):
+        
+        return self._make_request('delete', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Attachment-get'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-get'>#</a>
+        </div>
+        <h3>get</h3>
+        <p>Make a GET request against the object's URI joined
+with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def get(self, path='', **kwargs):
+        
+        return self._make_request('get', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Attachment-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-post'>#</a>
+        </div>
+        <h3>post</h3>
+        <p>Make a POST request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def post(self, path='', **kwargs):
+        
+        return self._make_request('post', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Attachment-put'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-put'>#</a>
+        </div>
+        <h3>put</h3>
+        <p>Make a PUT request against the object's URI joined
+with <code>path</code>.</p>
+<p><code>kwargs['params']</code> are turned into JSON before being
+passed to Requests. If you want to indicate the message
+body without it being modified, use <code>kwargs['data']</code>.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def put(self, path='', **kwargs):
+        
+        return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+  </div>
+  
+</body>
