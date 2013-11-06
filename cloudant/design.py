@@ -1,5 +1,5 @@
 from .document import Document
-from .view import View
+from .index import Index
 
 class Design(Document):
     """
@@ -9,39 +9,39 @@ class Design(Document):
     """
 
 
-    def view(self, path, **kwargs):
+    def index(self, path, **kwargs):
         """
-        Create a `View` object referencing the function at `path`. For example:
+        Create a `Index` object referencing the function at `path`. For example:
 
-            view = doc.view('_view/index-name')
+            index = doc.index('_view/index-name')
             # refers to /DB/_design/DOC/_view/index-name
         """
         opts = dict(self.opts.items() + kwargs.items())
-        return View(self._make_url(path), session=self._session, **opts)
+        return Index(self._make_url(path), session=self._session, **opts)
 
-    def index(self, function, **kwargs):
+    def view(self, function, **kwargs):
         """
-        Create a `View` object referencing the secondary index at `_view/{function}`. For example:
+        Create a `Index` object referencing the secondary index at `_view/{function}`. For example:
 
-            view = doc.index('index-name')
+            index = doc.view('index-name')
             # refers to /DB/_design/DOC/_view/index-name
 
         For more on secondary indices, see
         [Querying a View](http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view)
         """
-        return self.view('/'.join(['_view', function]), **kwargs)
+        return self.index('/'.join(['_view', function]), **kwargs)
 
     def search(self, function, **kwargs):
         """
-        Creates a `View` object referencing the search index at `_search/{function}`. For example:
+        Creates a `Index` object referencing the search index at `_search/{function}`. For example:
 
-            view = doc.search('index-name')
+            index = doc.search('index-name')
             # refers to /DB/_design/DOC/_search/search-name
 
         For more details on search indexes, see
         [Searching for documents using Lucene queries](http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries)
         """
-        return self.view('/'.join(['_search', function]), **kwargs)
+        return self.index('/'.join(['_search', function]), **kwargs)
 
     def list(self, function, index, **kwargs):
         """

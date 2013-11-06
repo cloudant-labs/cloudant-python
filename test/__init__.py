@@ -23,58 +23,58 @@ class ResourceTest(unittest.TestCase):
         }
 
 
-class ConnectionTest(ResourceTest):
+class AccountTest(ResourceTest):
 
     def setUp(self):
-        super(ConnectionTest, self).setUp()
-        self.conn = cloudant.Connection(self.uri)
+        super(AccountTest, self).setUp()
+        self.account = cloudant.Account(self.uri)
 
     def testCloudant(self):
-        conn = cloudant.Connection('garbados')
-        assert conn.uri == "https://garbados.cloudant.com"
+        account = cloudant.Account('garbados')
+        assert account.uri == "https://garbados.cloudant.com"
 
     def testAllDbs(self):
-        assert self.conn.all_dbs().result().status_code == 200
+        assert self.account.all_dbs().result().status_code == 200
 
     def testSession(self):
-        assert self.conn.session().result().status_code == 200
+        assert self.account.session().result().status_code == 200
 
     def testActiveTasks(self):
-        assert self.conn.active_tasks().result().status_code == 200
+        assert self.account.active_tasks().result().status_code == 200
 
     def testSecurity(self):
         username = 'user'
         password = 'password'
         # try auth login when admin party is on
-        assert self.conn.login(username, password).result().status_code == 401
+        assert self.account.login(username, password).result().status_code == 401
         # disable admin party
         path = '_config/admins/%s' % username
-        assert self.conn.put(path, data="\"%s\"" %
+        assert self.account.put(path, data="\"%s\"" %
                              password).result().status_code == 200
         # login, logout
-        assert self.conn.login(username, password).result().status_code == 200
-        assert self.conn.logout().result().status_code == 200
+        assert self.account.login(username, password).result().status_code == 200
+        assert self.account.logout().result().status_code == 200
         # re-enable admin party
-        assert self.conn.login(username, password).result().status_code == 200
-        assert self.conn.delete(path).result().status_code == 200
+        assert self.account.login(username, password).result().status_code == 200
+        assert self.account.delete(path).result().status_code == 200
 
     def testReplicate(self):
-        self.db = self.conn.database(self.db_name)
+        self.db = self.account.database(self.db_name)
         assert self.db.put().result().status_code == 201
 
         params = dict(create_target=True)
-        assert self.conn.replicate(
+        assert self.account.replicate(
             self.db_name, self.otherdb_name, params=params).result().status_code == 200
 
         assert self.db.delete().result().status_code == 200
-        assert self.conn.delete(self.otherdb_name).result().status_code == 200
+        assert self.account.delete(self.otherdb_name).result().status_code == 200
 
     def testCreateDb(self):
-        self.conn.database(self.db_name)
-        self.conn[self.db_name]
+        self.account.database(self.db_name)
+        self.account[self.db_name]
 
     def testUuids(self):
-        assert self.conn.uuids().result().status_code == 200
+        assert self.account.uuids().result().status_code == 200
 
 
 class DatabaseTest(ResourceTest):
@@ -166,8 +166,8 @@ class DesignTest(ResourceTest):
         assert self.doc.put(params=self.test_doc).result().status_code == 201
 
     def testView(self):
-        self.doc.view('_view/derp')
-        self.doc.index('derp')
+        self.doc.index('_view/derp')
+        self.doc.view('derp')
         self.doc.search('derp')
 
     def testList(self):
@@ -183,10 +183,10 @@ class AttachmentTest(ResourceTest):
     pass
 
 
-class ViewTest(ResourceTest):
+class IndexTest(ResourceTest):
 
     def setUp(self):
-        super(ViewTest, self).setUp()
+        super(IndexTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         assert self.db.put().result().status_code == 201
         self.doc = self.db.document(self.doc_name)

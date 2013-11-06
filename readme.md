@@ -17,10 +17,16 @@ Cloudant-Python is an asynchronous wrapper around Python [Requests](http://www.p
 
     import cloudant
 
-    # create a connection object
-    conn = cloudant.Connection()
+    # connect to your account
+    # in this case, https://garbados.cloudant.com
+    account = cloudant.Account('garbados')
+    
+    # login, so we can make changes
+    assert account.login('garbados', PASSWORD).result().status_code == 200
+
     # create a database object
-    db = conn.database('test')
+    db = account.database('test')
+    
     # now, create the database on the server
     future = db.put()
     response = future.result()
@@ -35,9 +41,9 @@ Cloudant and CouchDB expose REST APIs that map effortlessly into native Python o
 
     import cloudant
 
-    conn = cloudant.Connection()
-    db = conn.database('test')
-    same_db = conn['test']
+    account = cloudant.Account('garbados')
+    db = account.database('test')
+    same_db = account['test']
     assert db.uri == same_db.uri
     # True
 
@@ -45,8 +51,8 @@ Cloudant-Python expose raw interactions -- HTTP requests, etc. -- through specia
 
     import cloudant
 
-    conn = cloudant.Connection()
-    db = conn.database('test')
+    account = cloudant.Account('garbados')
+    db = account.database('test')
     doc = db.document('test_doc')
     # create the document
     resp = doc.put({
@@ -63,8 +69,8 @@ If CouchDB has a special endpoint for something, it's in Cloudant-Python as a sp
 
     import cloudant
 
-    conn = cloudant.Connection()
-    db = conn.database('test')
+    account = cloudant.Account('garbados')
+    db = account.database('test')
     view = db.all_docs() # returns all docs in the database
     for doc in db:
       # iterates over every doc in the database
@@ -79,8 +85,8 @@ HTTP request methods like `get` and `post` return `Future` objects, which repres
 
     import cloudant
 
-    conn = cloudant.Connection()
-    db = conn['test']
+    account = cloudant.Account()
+    db = account['test']
     future = db.put()
     response = future.result()
     print db.get().result().json()
@@ -90,12 +96,12 @@ As a result, any methods which must make an HTTP request return a `Future`.
 
 ### Option Inheritance
 
-If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Connection.database` to inherit cookies and other settings from the `Connection` object. For example:
+If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Account.database` to inherit cookies and other settings from the `Account` object. For example:
 
     import cloudant
 
-    conn = cloudant.Connection('garbados')
-    db = conn.database('test')
+    account = cloudant.Account('garbados')
+    db = account.database('test')
     doc = db.document('test_doc')
 
     url = 'https://garbados.cloudant.com'

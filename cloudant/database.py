@@ -1,7 +1,7 @@
 from .resource import Resource
 from .document import Document
 from .design import Design
-from .view import View
+from .index import Index
 
 
 class Database(Resource):
@@ -39,13 +39,13 @@ class Database(Resource):
 
     def all_docs(self, **kwargs):
         """
-        Return a `View` object referencing all documents in the database.
+        Return an `Index` object referencing all documents in the database.
         You can treat it like an iterator:
 
             for doc in db.all_docs():
                 print doc
         """
-        return View(self._make_url('_all_docs'), session=self._session, **kwargs)
+        return Index(self._make_url('_all_docs'), session=self._session, **kwargs)
 
     def __iter__(self):
         """Formats `Database.all_docs` for use as an iterator."""
