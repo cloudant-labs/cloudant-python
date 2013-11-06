@@ -6,7 +6,7 @@ ORDER = [
     'Database',
     'Document',
     'Design',
-    'View',
+    'Index',
     'Attachment'
 ]
 

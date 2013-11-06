@@ -22,7 +22,8 @@ Cloudant-Python is an asynchronous wrapper around Python [Requests](http://www.p
     account = cloudant.Account('garbados')
     
     # login, so we can make changes
-    assert account.login('garbados', PASSWORD).result().status_code == 200
+    login = account.login('garbados', PASSWORD)
+    assert login.result().status_code == 200
 
     # create a database object
     db = account.database('test')

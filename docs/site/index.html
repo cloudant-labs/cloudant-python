@@ -15,7 +15,7 @@
         <a class="source" href="#">Home</a>
         <a class="source" href="#api">API Reference</a>
         
-        <a class="source" href="#Connection">Connection</a>
+        <a class="source" href="#Account">Account</a>
         
         <a class="source" href="#Database">Database</a>
         
@@ -23,7 +23,7 @@
         
         <a class="source" href="#Design">Design</a>
         
-        <a class="source" href="#View">View</a>
+        <a class="source" href="#Index">Index</a>
         
         <a class="source" href="#Attachment">Attachment</a>
         
@@ -42,31 +42,39 @@
 <p>Cloudant-Python is an asynchronous wrapper around Python <a href="http://www.python-requests.org/en/latest/">Requests</a> for interacting with CouchDB or Cloudant instances. Check it out:</p>
 <pre><code>import cloudant
 
-# create a connection object
-conn = cloudant.Connection()
+# connect to your account
+# in this case, https://garbados.cloudant.com
+account = cloudant.Account('garbados')
+
+# login, so we can make changes
+login = account.login('garbados', PASSWORD)
+assert login.result().status_code == 200
+
 # create a database object
-db = conn.database('test')
+db = account.database('test')
+
 # now, create the database on the server
 future = db.put()
 response = future.result()
 print response.json()
 # {'ok': True}
 </code></pre>
+<p>See the <a href="http://cloudant-labs.github.io/cloudant-python/#api">API reference</a> for all the details you could ever want.</p>
 <h3>Philosophy</h3>
 <p>Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
 <pre><code>import cloudant
 
-conn = cloudant.Connection()
-db = conn.database('test')
-same_db = conn['test']
+account = cloudant.Account('garbados')
+db = account.database('test')
+same_db = account['test']
 assert db.uri == same_db.uri
 # True
 </code></pre>
 <p>Cloudant-Python expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as <code>__getitem__</code>, act as Pythonic shortcuts to those methods. For example:</p>
 <pre><code>import cloudant
 
-conn = cloudant.Connection()
-db = conn.database('test')
+account = cloudant.Account('garbados')
+db = account.database('test')
 doc = db.document('test_doc')
 # create the document
 resp = doc.put({
@@ -82,8 +90,8 @@ db['hello_world'] = {'herp': 'derp'}
 <p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. For example:</p>
 <pre><code>import cloudant
 
-conn = cloudant.Connection()
-db = conn.database('test')
+account = cloudant.Account('garbados')
+db = account.database('test')
 view = db.all_docs() # returns all docs in the database
 for doc in db:
   # iterates over every doc in the database
@@ -96,8 +104,8 @@ for doc in view:
 <p>HTTP request methods like <code>get</code> and <code>post</code> return <code>Future</code> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the <code>result</code> method, like so:</p>
 <pre><code>import cloudant
 
-conn = cloudant.Connection()
-db = conn['test']
+account = cloudant.Account()
+db = account['test']
 future = db.put()
 response = future.result()
 print db.get().result().json()
@@ -105,11 +113,11 @@ print db.get().result().json()
 </code></pre>
 <p>As a result, any methods which must make an HTTP request return a <code>Future</code>.</p>
 <h3>Option Inheritance</h3>
-<p>If you use one object to create another, the child will inherit the parents' settings. So, you can create a <code>Database</code> object explicitly, or use <code>Connection.database</code> to inherit cookies and other settings from the <code>Connection</code> object. For example:</p>
+<p>If you use one object to create another, the child will inherit the parents' settings. So, you can create a <code>Database</code> object explicitly, or use <code>Account.database</code> to inherit cookies and other settings from the <code>Account</code> object. For example:</p>
 <pre><code>import cloudant
 
-conn = cloudant.Connection('garbados')
-db = conn.database('test')
+account = cloudant.Account('garbados')
+db = account.database('test')
 doc = db.document('test_doc')
 
 url = 'https://garbados.cloudant.com'
@@ -143,23 +151,23 @@ assert doc.uri == otherdoc.uri
   </div>
   <div class='clearall'></div>
   
-  <div class='section' id="Connection">
+  <div class='section' id="Account">
     <div class='docs'>
-      <h2>Connection</h2>
-      <p>A connection to a Cloudant or CouchDB instance.</p>
-<pre><code>connection = cloudant.Connection()
-connection.login(USERNAME, PASSWORD).result()
-print connection.get().result().json()
+      <h2>Account</h2>
+      <p>A account to a Cloudant or CouchDB account.</p>
+<pre><code>account = cloudant.Account()
+account.login(USERNAME, PASSWORD).result()
+print account.get().result().json()
 # {"couchdb": "Welcome", ...}
 </code></pre>
     </div>
   </div>
   <div class='clearall'>
     
-    <div class='section' id='Connection-active_tasks'>
+    <div class='section' id='Account-active_tasks'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-active_tasks'>#</a>
+          <a class='octothorpe' href='#Account-active_tasks'>#</a>
         </div>
         <h3>active_tasks</h3>
         <p>List replication, compaction, and indexer tasks currently running.</p>
@@ -173,10 +181,10 @@ print connection.get().result().json()
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-all_dbs'>
+    <div class='section' id='Account-all_dbs'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-all_dbs'>#</a>
+          <a class='octothorpe' href='#Account-all_dbs'>#</a>
         </div>
         <h3>all_dbs</h3>
         <p>List all databases.</p>
@@ -190,13 +198,13 @@ print connection.get().result().json()
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-database'>
+    <div class='section' id='Account-database'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-database'>#</a>
+          <a class='octothorpe' href='#Account-database'>#</a>
         </div>
         <h3>database</h3>
-        <p>Create a <code>Database</code> object prefixed with this connection's URL.</p>
+        <p>Create a <code>Database</code> object prefixed with this account's URL.</p>
       </div>
       <div class='code'>
         <pre><code>    def database(self, name, **kwargs):
@@ -208,10 +216,10 @@ print connection.get().result().json()
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-delete'>
+    <div class='section' id='Account-delete'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-delete'>#</a>
+          <a class='octothorpe' href='#Account-delete'>#</a>
         </div>
         <h3>delete</h3>
         <p>Make a DELETE request against the object's URI joined
@@ -226,10 +234,10 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-get'>
+    <div class='section' id='Account-get'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-get'>#</a>
+          <a class='octothorpe' href='#Account-get'>#</a>
         </div>
         <h3>get</h3>
         <p>Make a GET request against the object's URI joined
@@ -244,10 +252,10 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-login'>
+    <div class='section' id='Account-login'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-login'>#</a>
+          <a class='octothorpe' href='#Account-login'>#</a>
         </div>
         <h3>login</h3>
         <p>Authenticate the connection via cookie.</p>
@@ -255,20 +263,21 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
       <div class='code'>
         <pre><code>    def login(self, username, password, **kwargs):
         
+        # set headers, body explicitly
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
         data = "name=%s&password=%s" % (username, password)
-        return self.post('_session', headers=headers, data=data, **kwargs)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
 </code></pre>
       </div>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-logout'>
+    <div class='section' id='Account-logout'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-logout'>#</a>
+          <a class='octothorpe' href='#Account-logout'>#</a>
         </div>
         <h3>logout</h3>
         <p>De-authenticate the connection's cookie.</p>
@@ -276,16 +285,16 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
       <div class='code'>
         <pre><code>    def logout(self, **kwargs):
         
-        return self.delete('_session', **kwargs)
+        return self.delete(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-post'>
+    <div class='section' id='Account-post'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-post'>#</a>
+          <a class='octothorpe' href='#Account-post'>#</a>
         </div>
         <h3>post</h3>
         <p>Make a POST request against the object's URI joined
@@ -303,10 +312,10 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-put'>
+    <div class='section' id='Account-put'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-put'>#</a>
+          <a class='octothorpe' href='#Account-put'>#</a>
         </div>
         <h3>put</h3>
         <p>Make a PUT request against the object's URI joined
@@ -324,10 +333,10 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-replicate'>
+    <div class='section' id='Account-replicate'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-replicate'>#</a>
+          <a class='octothorpe' href='#Account-replicate'>#</a>
         </div>
         <h3>replicate</h3>
         <p>Begin a replication job.
@@ -356,10 +365,10 @@ is continuous (<code>continuous</code>).</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-session'>
+    <div class='section' id='Account-session'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-session'>#</a>
+          <a class='octothorpe' href='#Account-session'>#</a>
         </div>
         <h3>session</h3>
         <p>Get current user's authentication and authorization status.</p>
@@ -367,16 +376,16 @@ is continuous (<code>continuous</code>).</p>
       <div class='code'>
         <pre><code>    def session(self, **kwargs):
         
-        return self.get('_session', **kwargs)
+        return self.get(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='Connection-uuids'>
+    <div class='section' id='Account-uuids'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#Connection-uuids'>#</a>
+          <a class='octothorpe' href='#Account-uuids'>#</a>
         </div>
         <h3>uuids</h3>
         <p>Generate an arbitrary number of UUIDs.</p>
@@ -408,7 +417,7 @@ is continuous (<code>continuous</code>).</p>
           <a class='octothorpe' href='#Database-all_docs'>#</a>
         </div>
         <h3>all_docs</h3>
-        <p>Return a <code>View</code> object referencing all documents in the database.
+        <p>Return an <code>Index</code> object referencing all documents in the database.
 You can treat it like an iterator:</p>
 <pre><code>for doc in db.all_docs():
     print doc
@@ -417,7 +426,7 @@ You can treat it like an iterator:</p>
       <div class='code'>
         <pre><code>    def all_docs(self, **kwargs):
         
-        return View(self._make_url('_all_docs'), session=self._session, **kwargs)
+        return Index(self._make_url('_all_docs'), session=self._session, **kwargs)
 </code></pre>
       </div>
     </div>
@@ -526,6 +535,45 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Database-login'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Database-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete(self._reset_path('_session'), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Database-missing_revs'>
       <div class='docs'>
         <div class='octowrap'>
@@ -625,6 +673,23 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Database-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get(self._reset_path('_session'), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Database-view_cleanup'>
       <div class='docs'>
         <div class='octowrap'>
@@ -713,6 +778,45 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Document-login'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete(self._reset_path('_session'), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Document-merge'>
       <div class='docs'>
         <div class='octowrap'>
@@ -770,6 +874,23 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
         <pre><code>    def put(self, path='', **kwargs):
         
         return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Document-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Document-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
@@ -849,17 +970,16 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
           <a class='octothorpe' href='#Design-index'>#</a>
         </div>
         <h3>index</h3>
-        <p>Create a <code>View</code> object referencing the secondary index at <code>_view/{function}</code>. For example:</p>
-<pre><code>view = doc.index('index-name')
+        <p>Create a <code>Index</code> object referencing the function at <code>path</code>. For example:</p>
+<pre><code>index = doc.index('_view/index-name')
 # refers to /DB/_design/DOC/_view/index-name
 </code></pre>
-<p>For more on secondary indices, see
-<a href="http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view">Querying a View</a></p>
       </div>
       <div class='code'>
-        <pre><code>    def index(self, function, **kwargs):
+        <pre><code>    def index(self, path, **kwargs):
         
-        return self.view('/'.join(['_view', function]), **kwargs)
+        opts = dict(self.opts.items() + kwargs.items())
+        return Index(self._make_url(path), session=self._session, **opts)
 </code></pre>
       </div>
     </div>
@@ -882,6 +1002,45 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
         <pre><code>    def list(self, function, index, **kwargs):
         
         return self.get(self._make_url('/'.join(['_list', function, index])), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-login'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
@@ -955,8 +1114,8 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
           <a class='octothorpe' href='#Design-search'>#</a>
         </div>
         <h3>search</h3>
-        <p>Creates a <code>View</code> object referencing the search index at <code>_search/{function}</code>. For example:</p>
-<pre><code>view = doc.search('index-name')
+        <p>Creates a <code>Index</code> object referencing the search index at <code>_search/{function}</code>. For example:</p>
+<pre><code>index = doc.search('index-name')
 # refers to /DB/_design/DOC/_search/search-name
 </code></pre>
 <p>For more details on search indexes, see
@@ -965,7 +1124,24 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
       <div class='code'>
         <pre><code>    def search(self, function, **kwargs):
         
-        return self.view('/'.join(['_search', function]), **kwargs)
+        return self.index('/'.join(['_search', function]), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Design-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Design-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
@@ -999,16 +1175,17 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
           <a class='octothorpe' href='#Design-view'>#</a>
         </div>
         <h3>view</h3>
-        <p>Create a <code>View</code> object referencing the function at <code>path</code>. For example:</p>
-<pre><code>view = doc.view('_view/index-name')
+        <p>Create a <code>Index</code> object referencing the secondary index at <code>_view/{function}</code>. For example:</p>
+<pre><code>index = doc.view('index-name')
 # refers to /DB/_design/DOC/_view/index-name
 </code></pre>
+<p>For more on secondary indices, see
+<a href="http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view">Querying a View</a></p>
       </div>
       <div class='code'>
-        <pre><code>    def view(self, path, **kwargs):
+        <pre><code>    def view(self, function, **kwargs):
         
-        opts = dict(self.opts.items() + kwargs.items())
-        return View(self._make_url(path), session=self._session, **opts)
+        return self.index('/'.join(['_view', function]), **kwargs)
 </code></pre>
       </div>
     </div>
@@ -1016,19 +1193,17 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
     
   </div>
   
-  <div class='section' id="View">
+  <div class='section' id="Index">
     <div class='docs'>
-      <h2>View</h2>
-      <p>Methods for design document indexes and special methods.
-Different kinds of indexes / methods will behave differently, so here are helpful docs:</p>
+      <h2>Index</h2>
+      <p>Methods for design document indexes.
+Different kinds of indexes will behave differently, so here are helpful docs:</p>
 <ul>
 <li><a href="http://docs.cloudant.com/api/search.html#searching-for-documents-using-lucene-queries">Lucene search indexes</a></li>
 <li><a href="http://docs.cloudant.com/api/design-documents-querying-views.html#querying-a-view">Secondary indexes / "views"</a></li>
-<li><a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-list-functions">List functions</a></li>
-<li><a href="http://docs.cloudant.com/api/design-documents-shows-lists.html#querying-show-functions">Show functions</a></li>
 </ul>
 <p>Then, you just use basic HTTP methods to perform queries, like this:</p>
-<pre><code>view.get(params=QUERY_ARGUMENTS)
+<pre><code>index.get(params=QUERY_ARGUMENTS)
 </code></pre>
 <p>Remember, before you can query an index, you have to make sure it's in your database.
 See <a href="http://docs.cloudant.com/api/design-documents-get-put-delete-copy.html#creating-or-updating-a-design-document">these docs</a>
@@ -1037,10 +1212,10 @@ for how to do that.</p>
   </div>
   <div class='clearall'>
     
-    <div class='section' id='View-delete'>
+    <div class='section' id='Index-delete'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#View-delete'>#</a>
+          <a class='octothorpe' href='#Index-delete'>#</a>
         </div>
         <h3>delete</h3>
         <p>Make a DELETE request against the object's URI joined
@@ -1055,10 +1230,10 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='View-get'>
+    <div class='section' id='Index-get'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#View-get'>#</a>
+          <a class='octothorpe' href='#Index-get'>#</a>
         </div>
         <h3>get</h3>
         <p>Make a GET request against the object's URI joined
@@ -1073,10 +1248,49 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='View-post'>
+    <div class='section' id='Index-login'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#View-post'>#</a>
+          <a class='octothorpe' href='#Index-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Index-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Index-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete(self._reset_path('_session'), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Index-post'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Index-post'>#</a>
         </div>
         <h3>post</h3>
         <p>Make a POST request against the object's URI joined
@@ -1094,10 +1308,10 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
     </div>
     <div class='clearall'></div>
     
-    <div class='section' id='View-put'>
+    <div class='section' id='Index-put'>
       <div class='docs'>
         <div class='octowrap'>
-          <a class='octothorpe' href='#View-put'>#</a>
+          <a class='octothorpe' href='#Index-put'>#</a>
         </div>
         <h3>put</h3>
         <p>Make a PUT request against the object's URI joined
@@ -1110,6 +1324,23 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
         <pre><code>    def put(self, path='', **kwargs):
         
         return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Index-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Index-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
@@ -1161,6 +1392,45 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Attachment-login'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-login'>#</a>
+        </div>
+        <h3>login</h3>
+        <p>Authenticate the connection via cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def login(self, username, password, **kwargs):
+        
+        # set headers, body explicitly
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = "name=%s&password=%s" % (username, password)
+        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Attachment-logout'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-logout'>#</a>
+        </div>
+        <h3>logout</h3>
+        <p>De-authenticate the connection's cookie.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def logout(self, **kwargs):
+        
+        return self.delete(self._reset_path('_session'), **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Attachment-post'>
       <div class='docs'>
         <div class='octowrap'>
@@ -1198,6 +1468,23 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
         <pre><code>    def put(self, path='', **kwargs):
         
         return self._make_request('put', path, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
+    <div class='section' id='Attachment-session'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Attachment-session'>#</a>
+        </div>
+        <h3>session</h3>
+        <p>Get current user's authentication and authorization status.</p>
+      </div>
+      <div class='code'>
+        <pre><code>    def session(self, **kwargs):
+        
+        return self.get(self._reset_path('_session'), **kwargs)
 </code></pre>
       </div>
     </div>
