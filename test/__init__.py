@@ -166,8 +166,8 @@ class DesignTest(ResourceTest):
         assert self.doc.put(params=self.test_doc).result().status_code == 201
 
     def testView(self):
-        self.doc.view('_view/derp')
-        self.doc.index('derp')
+        self.doc.index('_view/derp')
+        self.doc.view('derp')
         self.doc.search('derp')
 
     def testList(self):
@@ -182,10 +182,10 @@ class AttachmentTest(ResourceTest):
     pass
 
 
-class ViewTest(ResourceTest):
+class IndexTest(ResourceTest):
 
     def setUp(self):
-        super(ViewTest, self).setUp()
+        super(IndexTest, self).setUp()
         self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
         assert self.db.put().result().status_code == 201
         self.doc = self.db.document(self.doc_name)
