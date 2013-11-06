@@ -3,29 +3,29 @@ from .database import Database
 import urlparse
 
 
-class Connection(Resource):
+class Account(Resource):
 
     """
-    A connection to a Cloudant or CouchDB instance.
+    A account to a Cloudant or CouchDB account.
 
-        connection = cloudant.Connection()
-        connection.login(USERNAME, PASSWORD).result()
-        print connection.get().result().json()
+        account = cloudant.Account()
+        account.login(USERNAME, PASSWORD).result()
+        print account.get().result().json()
         # {"couchdb": "Welcome", ...}
     """
 
     def __init__(self, uri="http://localhost:5984", **kwargs):
         if not urlparse.urlparse(uri).scheme:
             uri = "https://%s.cloudant.com" % uri
-        super(Connection, self).__init__(uri, **kwargs)
+        super(Account, self).__init__(uri, **kwargs)
 
     def database(self, name, **kwargs):
-        """Create a `Database` object prefixed with this connection's URL."""
+        """Create a `Database` object prefixed with this account's URL."""
         opts = dict(self.opts.items() + kwargs.items())
         return Database(self._make_url(name), session=self._session, **opts)
 
     def __getitem__(self, name):
-        """Shortcut to `Connection.database`."""
+        """Shortcut to `Account.database`."""
         return self.database(name, **self.opts)
 
     def all_dbs(self, **kwargs):
@@ -37,7 +37,7 @@ class Connection(Resource):
         return self.get('_session', **kwargs)
 
     def login(self, username, password, **kwargs):
-        """Authenticate the connection via cookie."""
+        """Authenticate the account via cookie."""
         headers = {
             "Content-Type": "application/x-www-form-urlencoded"
         }
@@ -45,7 +45,7 @@ class Connection(Resource):
         return self.post('_session', headers=headers, data=data, **kwargs)
 
     def logout(self, **kwargs):
-        """De-authenticate the connection's cookie."""
+        """De-authenticate the account's cookie."""
         return self.delete('_session', **kwargs)
 
     def active_tasks(self, **kwargs):

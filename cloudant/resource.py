@@ -9,11 +9,11 @@ class Resource(object):
     REST resource class: implements GET, POST, PUT, DELETE methods
     for all other Divan objects, and manages settings inheritance.
 
-    If you create an object, like a `Connection`, then use that to
+    If you create an object, like an `Account`, then use that to
     create a `Database` object, the `Database` will inherit any options
-    from the `Connection` object, like
+    from the `Account` object, such as session cookies.
 
-    Implements CRUD operations for all other Divan objects.
+    Implements CRUD operations for all other Cloudant-Python objects.
     """
     def __init__(self, uri, **kwargs):
         self.uri = uri
