@@ -27,6 +27,8 @@ Cloudant-Python is an asynchronous wrapper around Python [Requests](http://www.p
     print response.json()
     # {'ok': True}
 
+See the [API reference](http://cloudant-labs.github.io/cloudant-python/#api) for all the details you could ever want.
+
 ### Philosophy
 
 Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
