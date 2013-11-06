@@ -1,8 +1,0 @@
-*.egg
-*.egg-info
-venv
-*.pyc
-build
-dist
-.coverage
-.DS_STORE
