@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div id="jump_to">
+    Jump To &hellip;
+    <div id="jump_wrapper">
+      <div id="jump_page">
+        <a class="source" href="#">Home</a>
+        <a class="source" href="#api">API Reference</a>
+        {% for section in sections %}
+        <a class="source" href="#{{ section.name }}">{{ section.name }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class='section'>
+    <div class='docs'>
+      {{ readme }}
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='api'>
+    <div class='docs'>
+      <h1>API Reference</h1>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  {% for section in sections %}
+  <div class='section' id="{{ section.name }}">
+    <div class='docs'>
+      <h2>{{ section.name }}</h2>
+      {{ section.head.html }}
+    </div>
+  </div>
+  <div class='clearall'>
+    {% for method in section.methods %}
+    <div class='section' id='{{ section.name }}-{{ method.name }}'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#{{ section.name }}-{{ method.name }}'>#</a>
+        </div>
+        <h3>{{ method.name }}</h3>
+        {{ method.html }}
+      </div>
+      <div class='code'>
+        <pre><code>{{ method.code }}</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</body>
