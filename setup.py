@@ -8,6 +8,7 @@ def read(fname):
 setup(name='cloudant',
       version='0.3.0',
       description='Asynchronous Cloudant / CouchDB Interface',
+      long_description=read('README.rst'),
       author='Max Thayer',
       author_email='garbados@gmail.com',
       url='https://github.com/cloudant-labs/cloudant',
