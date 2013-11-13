@@ -33,21 +33,25 @@
   <div class='section'>
     <div class='docs'>
       <h1>Cloudant-Python</h1>
-<p><a href="https://travis-ci.org/cloudant-labs/cloudant-python"><img alt="Build Status" src="https://travis-ci.org/cloudant-labs/cloudant-python.png" /></a> <a href="https://coveralls.io/r/cloudant-labs/cloudant-python"><img alt="Coverage Status" src="https://coveralls.io/repos/cloudant-labs/cloudant-python/badge.png" /></a> <a href="https://crate.io/packages/cloudant/"><img alt="PyPi version" src="https://pypip.in/v/cloudant/badge.png" /></a> <a href="https://crate.io/packages/cloudant/"><img alt="PyPi downloads" src="https://pypip.in/d/cloudant/badge.png" /></a></p>
+<p><a href="https://travis-ci.org/cloudant-labs/cloudant-python"><img alt="Build Status" src="https://travis-ci.org/cloudant-labs/cloudant-python.png" /></a>
+<a href="https://coveralls.io/r/cloudant-labs/cloudant-python"><img alt="Coverage Status" src="https://coveralls.io/repos/cloudant-labs/cloudant-python/badge.png" /></a>
+<a href="https://crate.io/packages/cloudant/"><img alt="PyPi version" src="https://pypip.in/v/cloudant/badge.png" /></a>
+<a href="https://crate.io/packages/cloudant/"><img alt="PyPi downloads" src="https://pypip.in/d/cloudant/badge.png" /></a></p>
 <p>An effortless Cloudant / CouchDB interface for Python.</p>
 <h2>Install</h2>
 <pre><code>pip install cloudant
 </code></pre>
 <h2>Usage</h2>
 <p>Cloudant-Python is an asynchronous wrapper around Python <a href="http://www.python-requests.org/en/latest/">Requests</a> for interacting with CouchDB or Cloudant instances. Check it out:</p>
-<pre><code>import cloudant
+<pre><code class="python">import cloudant
 
 # connect to your account
 # in this case, https://garbados.cloudant.com
-account = cloudant.Account('garbados')
+USERNAME = 'garbados'
+account = cloudant.Account(USERNAME)
 
 # login, so we can make changes
-login = account.login('garbados', PASSWORD)
+login = account.login(USERNAME, PASSWORD)
 assert login.result().status_code == 200
 
 # create a database object
@@ -59,10 +63,14 @@ response = future.result()
 print response.json()
 # {'ok': True}
 </code></pre>
+
+<p>HTTP requests return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which will await the return of the HTTP response. Call <code>result()</code> to get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object.</p>
 <p>See the <a href="http://cloudant-labs.github.io/cloudant-python/#api">API reference</a> for all the details you could ever want.</p>
 <h3>Philosophy</h3>
-<p>Cloudant and CouchDB expose REST APIs that map effortlessly into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
-<pre><code>import cloudant
+<p>Cloudant-Python is minimal, performant, and effortless. Check it out:</p>
+<h4>Pythonisms</h4>
+<p>Cloudant and CouchDB expose REST APIs that map easily into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
+<pre><code class="python">import cloudant
 
 account = cloudant.Account('garbados')
 db = account.database('test')
@@ -70,25 +78,36 @@ same_db = account['test']
 assert db.uri == same_db.uri
 # True
 </code></pre>
+
 <p>Cloudant-Python expose raw interactions -- HTTP requests, etc. -- through special methods, so we provide syntactical sugar without obscuring the underlying API. Built-ins, such as <code>__getitem__</code>, act as Pythonic shortcuts to those methods. For example:</p>
-<pre><code>import cloudant
+<pre><code class="python">import cloudant
 
 account = cloudant.Account('garbados')
-db = account.database('test')
+
+db_name = 'test'
+db = account.database(db_name)
 doc = db.document('test_doc')
+
 # create the document
 resp = doc.put({
   '_id': 'hello_world',
   'herp': 'derp'
   }).result()
+
 # delete the document
 rev = resp.json()['_rev']
 doc.delete(rev).result()
+
 # but this also creates a document
 db['hello_world'] = {'herp': 'derp'}
+
+# and this deletes the database
+del account[db_name]
 </code></pre>
-<p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. For example:</p>
-<pre><code>import cloudant
+
+<h4>Iterate over Indexes</h4>
+<p>Indexes, such as <a href="https://cloudant.com/for-developers/views/">views</a> and Cloudant's <a href="https://cloudant.com/for-developers/search/">search indexes</a>, act as iterators. Check it out:</p>
+<pre><code class="python">import cloudant
 
 account = cloudant.Account('garbados')
 db = account.database('test')
@@ -100,9 +119,18 @@ for doc in view:
   # and so does this!
   pass
 </code></pre>
-<h3>Asynchronous</h3>
-<p>HTTP request methods like <code>get</code> and <code>post</code> return <code>Future</code> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To wait for the response, use the <code>result</code> method, like so:</p>
-<pre><code>import cloudant
+
+<p><a href="https://github.com/cloudant-labs/cloudant-python/blob/master/cloudant/index.py#L23-L33">Behind the scenes</a>, Cloudant-Python yields documents only as you consume them, so you only load into memory the documents you're using.</p>
+<h4>Special Endpoints</h4>
+<p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. As a rule, any endpoint like <code>_METHOD</code> is in Cloudant-Python as <code>Object.METHOD</code>. For example:</p>
+<ul>
+<li><code>https://garbados.cloudant.com/_all_dbs</code> -&gt; <code>Account('garbados').all_dbs</code></li>
+<li><code>http://localhost:5984/DB/_all_docs</code> -&gt; <code>Account().database(DB).all_docs()</code></li>
+<li><code>http://localhost:5984/DB/_design/DOC/_view/INDEX</code> -&gt; <code>Account().database(DB).design(DOC).view(INDEX)</code></li>
+</ul>
+<h4>Asynchronous</h4>
+<p>HTTP request methods like <code>get</code> and <code>post</code> return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object (waiting until it arrives if necessary) use the <code>result</code> method, like so:</p>
+<pre><code class="python">import cloudant
 
 account = cloudant.Account()
 db = account['test']
@@ -111,10 +139,11 @@ response = future.result()
 print db.get().result().json()
 # {'db_name': 'test', ...}
 </code></pre>
-<p>As a result, any methods which must make an HTTP request return a <code>Future</code>.</p>
-<h3>Option Inheritance</h3>
+
+<p>As a result, any methods which must make an HTTP request return a <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> object.</p>
+<h4>Option Inheritance</h4>
 <p>If you use one object to create another, the child will inherit the parents' settings. So, you can create a <code>Database</code> object explicitly, or use <code>Account.database</code> to inherit cookies and other settings from the <code>Account</code> object. For example:</p>
-<pre><code>import cloudant
+<pre><code class="python">import cloudant
 
 account = cloudant.Account('garbados')
 db = account.database('test')
@@ -127,6 +156,7 @@ otherdoc = cloudant.Document(url + path)
 assert doc.uri == otherdoc.uri
 # True
 </code></pre>
+
 <h2>Testing</h2>
 <p>To run Cloudant-Python's tests, just do:</p>
 <pre><code>python setup.py test
@@ -432,6 +462,31 @@ You can treat it like an iterator:</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Database-bulk_docs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-bulk_docs'>#</a>
+        </div>
+        <h3>bulk_docs</h3>
+        <p>Save many docs, all at once. Each <code>doc</code> argument must be a dict, like this:</p>
+<pre><code>    db.bulk_docs({...}, {...}, {...})
+    # saves all documents in one HTTP request
+</code></pre>
+<p>For more detail on bulk operations, see
+<a href="http://docs.cloudant.com/api/database.html#creating-or-updating-multiple-documents">Creating or updating multiple documents</a></p>
+      </div>
+      <div class='code'>
+        <pre><code>    def bulk_docs(self, *docs, **kwargs):
+        
+        params = {
+            'docs': docs
+        }
+        return self.post('_bulk_docs', params=params, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Database-changes'>
       <div class='docs'>
         <div class='octowrap'>
@@ -645,29 +700,6 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
         <pre><code>    def revs_diff(self, revs, **kwargs):
         
         return self.post('_revs_diff', params=revs, **kwargs)
-</code></pre>
-      </div>
-    </div>
-    <div class='clearall'></div>
-    
-    <div class='section' id='Database-save_docs'>
-      <div class='docs'>
-        <div class='octowrap'>
-          <a class='octothorpe' href='#Database-save_docs'>#</a>
-        </div>
-        <h3>save_docs</h3>
-        <p>Save many docs, all at once. Each <code>doc</code> argument must be a dict, like this:</p>
-<pre><code>    db.save_docs({...}, {...}, {...})
-    # saves all documents in one HTTP request
-</code></pre>
-      </div>
-      <div class='code'>
-        <pre><code>    def save_docs(self, *docs, **kwargs):
-        
-        params = {
-            'docs': docs
-        }
-        return self.post('_bulk_docs', params=params, **kwargs)
 </code></pre>
       </div>
     </div>
