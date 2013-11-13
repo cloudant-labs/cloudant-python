@@ -8,7 +8,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='cloudant',
-      version='0.3.0',
+      version='0.4.0',
       description='Asynchronous Cloudant / CouchDB Interface',
       long_description=read('README.rst'),
       author='Max Thayer',
