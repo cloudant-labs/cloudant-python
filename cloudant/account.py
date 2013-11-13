@@ -28,6 +28,14 @@ class Account(Resource):
         """Shortcut to `Account.database`."""
         return self.database(name, **self.opts)
 
+    def __delitem__(self, name):
+        """
+        Delete a database named `name`.
+        Blocks until the response returns,
+        and raises an error if the deletion failed.
+        """
+        return self.database(name, **self.opts).delete().result().raise_for_status()
+
     def all_dbs(self, **kwargs):
         """List all databases."""
         return self.get('_all_dbs', **kwargs)

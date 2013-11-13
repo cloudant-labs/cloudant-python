@@ -71,7 +71,7 @@ class AccountTest(ResourceTest):
             self.db_name, self.otherdb_name, params=params).result().status_code == 200
 
         assert self.db.delete().result().status_code == 200
-        assert self.account.delete(self.otherdb_name).result().status_code == 200
+        del self.account[self.otherdb_name]
 
     def testCreateDb(self):
         self.account.database(self.db_name)
@@ -96,11 +96,11 @@ class DatabaseTest(ResourceTest):
         assert self.db.get().result().status_code == 200
 
     def testBulk(self):
-        assert self.db.save_docs(
+        assert self.db.bulk_docs(
             self.test_doc, self.test_otherdoc).result().status_code == 201
 
     def testIter(self):
-        assert self.db.save_docs(
+        assert self.db.bulk_docs(
             self.test_doc, self.test_otherdoc).result().status_code == 201
         for derp in self.db:
             pass
@@ -119,7 +119,7 @@ class DatabaseTest(ResourceTest):
 
     def testRevs(self):
         # put some docs
-        assert self.db.save_docs(
+        assert self.db.bulk_docs(
             self.test_doc, self.test_otherdoc).result().status_code == 201
         # get their revisions
         revs = defaultdict(list)
