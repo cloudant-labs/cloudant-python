@@ -80,7 +80,7 @@ def generate_docs(order, template, output, readme):
         template = jinja2.Template(f.read())
 
     with open(readme, 'r') as f:
-        readme = markdown.markdown(f.read())
+        readme = markdown.markdown(f.read(), ['fenced_code'])
 
     with open(output, 'w') as f:
         f.write(template.render(sections=sections, readme=readme))
