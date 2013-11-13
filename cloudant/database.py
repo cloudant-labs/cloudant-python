@@ -51,12 +51,15 @@ class Database(Resource):
         """Formats `Database.all_docs` for use as an iterator."""
         return self.all_docs().__iter__()
 
-    def save_docs(self, *docs, **kwargs):
+    def bulk_docs(self, *docs, **kwargs):
         """
         Save many docs, all at once. Each `doc` argument must be a dict, like this:
 
-                db.save_docs({...}, {...}, {...})
+                db.bulk_docs({...}, {...}, {...})
                 # saves all documents in one HTTP request
+
+        For more detail on bulk operations, see
+        [Creating or updating multiple documents](http://docs.cloudant.com/api/database.html#creating-or-updating-multiple-documents)
         """
         params = {
             'docs': docs
