@@ -8,10 +8,14 @@ class ResourceTest(unittest.TestCase):
 
     def setUp(self):
         self.uri = 'http://localhost:5984'
-        self.db_name = 'testdb'
-        self.otherdb_name = 'othertestdb'
-        self.doc_name = 'testdoc'
-        self.otherdoc_name = 'othertestdoc'
+
+        names = cloudant.Account(self.uri).uuids(4).result().json()['uuids']
+        # database names must start with a letter
+        names = map(lambda name: 'a' + name, names)
+        self.db_name = names[0]
+        self.otherdb_name = names[1]
+        self.doc_name = names[2]
+        self.otherdoc_name = names[3]
 
         self.test_doc = {
             'herp': 'derp',
@@ -81,10 +85,12 @@ class DatabaseTest(ResourceTest):
 
     def setUp(self):
         super(DatabaseTest, self).setUp()
-        self.db = cloudant.Database('/'.join([self.uri, self.db_name]))
-        status = self.db.put().result().status_code
-        print status
-        assert status in [201, 412]
+        
+        db_name = '/'.join([self.uri, self.db_name])
+        self.db = cloudant.Database(db_name)
+        
+        response = self.db.put().result()
+        response.raise_for_status()
 
     def testGet(self):
         assert self.db.get().result().status_code == 200
