@@ -462,6 +462,31 @@ You can treat it like an iterator:</p>
     </div>
     <div class='clearall'></div>
     
+    <div class='section' id='Database-bulk_docs'>
+      <div class='docs'>
+        <div class='octowrap'>
+          <a class='octothorpe' href='#Database-bulk_docs'>#</a>
+        </div>
+        <h3>bulk_docs</h3>
+        <p>Save many docs, all at once. Each <code>doc</code> argument must be a dict, like this:</p>
+<pre><code>    db.bulk_docs({...}, {...}, {...})
+    # saves all documents in one HTTP request
+</code></pre>
+<p>For more detail on bulk operations, see
+<a href="http://docs.cloudant.com/api/database.html#creating-or-updating-multiple-documents">Creating or updating multiple documents</a></p>
+      </div>
+      <div class='code'>
+        <pre><code>    def bulk_docs(self, *docs, **kwargs):
+        
+        params = {
+            'docs': docs
+        }
+        return self.post('_bulk_docs', params=params, **kwargs)
+</code></pre>
+      </div>
+    </div>
+    <div class='clearall'></div>
+    
     <div class='section' id='Database-changes'>
       <div class='docs'>
         <div class='octowrap'>
@@ -675,29 +700,6 @@ body without it being modified, use <code>kwargs['data']</code>.</p>
         <pre><code>    def revs_diff(self, revs, **kwargs):
         
         return self.post('_revs_diff', params=revs, **kwargs)
-</code></pre>
-      </div>
-    </div>
-    <div class='clearall'></div>
-    
-    <div class='section' id='Database-save_docs'>
-      <div class='docs'>
-        <div class='octowrap'>
-          <a class='octothorpe' href='#Database-save_docs'>#</a>
-        </div>
-        <h3>save_docs</h3>
-        <p>Save many docs, all at once. Each <code>doc</code> argument must be a dict, like this:</p>
-<pre><code>    db.save_docs({...}, {...}, {...})
-    # saves all documents in one HTTP request
-</code></pre>
-      </div>
-      <div class='code'>
-        <pre><code>    def save_docs(self, *docs, **kwargs):
-        
-        params = {
-            'docs': docs
-        }
-        return self.post('_bulk_docs', params=params, **kwargs)
 </code></pre>
       </div>
     </div>
