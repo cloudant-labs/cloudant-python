@@ -44,11 +44,11 @@ HTTP requests return [Future][futures] objects, which will await the return of t
 
 See the [API reference](http://cloudant-labs.github.io/cloudant-python/#api) for all the details you could ever want.
 
-### Philosophy
+## Philosophy
 
 Cloudant-Python is minimal, performant, and effortless. Check it out:
 
-#### Pythonisms
+### Pythonisms
 
 Cloudant and CouchDB expose REST APIs that map easily into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:
 
@@ -90,7 +90,7 @@ db['hello_world'] = {'herp': 'derp'}
 del account[db_name]
 ```
 
-#### Iterate over Indexes
+### Iterate over Indexes
 
 Indexes, such as [views](https://cloudant.com/for-developers/views/) and Cloudant's [search indexes](https://cloudant.com/for-developers/search/), act as iterators. Check it out:
 
@@ -110,7 +110,7 @@ for doc in view:
 
 [Behind the scenes](https://github.com/cloudant-labs/cloudant-python/blob/master/cloudant/index.py#L23-L33), Cloudant-Python yields documents only as you consume them, so you only load into memory the documents you're using.
 
-#### Special Endpoints
+### Special Endpoints
 
 If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. As a rule, any endpoint like `_METHOD` is in Cloudant-Python as `Object.METHOD`. For example:
 
@@ -118,7 +118,7 @@ If CouchDB has a special endpoint for something, it's in Cloudant-Python as a sp
 * `http://localhost:5984/DB/_all_docs` -> `Account().database(DB).all_docs()`
 * `http://localhost:5984/DB/_design/DOC/_view/INDEX` -> `Account().database(DB).design(DOC).view(INDEX)`
 
-#### Asynchronous
+### Asynchronous
 
 HTTP request methods like `get` and `post` return [Future][futures] objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the [Response][responses] object (waiting until it arrives if necessary) use the `result` method, like so:
 
@@ -135,7 +135,7 @@ print db.get().result().json()
 
 As a result, any methods which must make an HTTP request return a [Future][futures] object.
 
-#### Option Inheritance
+### Option Inheritance
 
 If you use one object to create another, the child will inherit the parents' settings. So, you can create a `Database` object explicitly, or use `Account.database` to inherit cookies and other settings from the `Account` object. For example:
 
