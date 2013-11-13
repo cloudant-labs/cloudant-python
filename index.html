@@ -66,9 +66,9 @@ print response.json()
 
 <p>HTTP requests return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which will await the return of the HTTP response. Call <code>result()</code> to get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object.</p>
 <p>See the <a href="http://cloudant-labs.github.io/cloudant-python/#api">API reference</a> for all the details you could ever want.</p>
-<h3>Philosophy</h3>
+<h2>Philosophy</h2>
 <p>Cloudant-Python is minimal, performant, and effortless. Check it out:</p>
-<h4>Pythonisms</h4>
+<h3>Pythonisms</h3>
 <p>Cloudant and CouchDB expose REST APIs that map easily into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
 <pre><code class="python">import cloudant
 
@@ -105,7 +105,7 @@ db['hello_world'] = {'herp': 'derp'}
 del account[db_name]
 </code></pre>
 
-<h4>Iterate over Indexes</h4>
+<h3>Iterate over Indexes</h3>
 <p>Indexes, such as <a href="https://cloudant.com/for-developers/views/">views</a> and Cloudant's <a href="https://cloudant.com/for-developers/search/">search indexes</a>, act as iterators. Check it out:</p>
 <pre><code class="python">import cloudant
 
@@ -121,14 +121,14 @@ for doc in view:
 </code></pre>
 
 <p><a href="https://github.com/cloudant-labs/cloudant-python/blob/master/cloudant/index.py#L23-L33">Behind the scenes</a>, Cloudant-Python yields documents only as you consume them, so you only load into memory the documents you're using.</p>
-<h4>Special Endpoints</h4>
+<h3>Special Endpoints</h3>
 <p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. As a rule, any endpoint like <code>_METHOD</code> is in Cloudant-Python as <code>Object.METHOD</code>. For example:</p>
 <ul>
 <li><code>https://garbados.cloudant.com/_all_dbs</code> -&gt; <code>Account('garbados').all_dbs</code></li>
 <li><code>http://localhost:5984/DB/_all_docs</code> -&gt; <code>Account().database(DB).all_docs()</code></li>
 <li><code>http://localhost:5984/DB/_design/DOC/_view/INDEX</code> -&gt; <code>Account().database(DB).design(DOC).view(INDEX)</code></li>
 </ul>
-<h4>Asynchronous</h4>
+<h3>Asynchronous</h3>
 <p>HTTP request methods like <code>get</code> and <code>post</code> return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object (waiting until it arrives if necessary) use the <code>result</code> method, like so:</p>
 <pre><code class="python">import cloudant
 
@@ -141,7 +141,7 @@ print db.get().result().json()
 </code></pre>
 
 <p>As a result, any methods which must make an HTTP request return a <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> object.</p>
-<h4>Option Inheritance</h4>
+<h3>Option Inheritance</h3>
 <p>If you use one object to create another, the child will inherit the parents' settings. So, you can create a <code>Database</code> object explicitly, or use <code>Account.database</code> to inherit cookies and other settings from the <code>Account</code> object. For example:</p>
 <pre><code class="python">import cloudant
 
