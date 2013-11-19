@@ -63,7 +63,7 @@ print response.json()
 # {'ok': True}
 </code></pre>
 
-<p>HTTP requests return [Response][response] objects, right from <a href="http://www.python-requests.org/en/latest/">Requests</a>.</p>
+<p>HTTP requests return <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> objects, right from <a href="http://www.python-requests.org/en/latest/">Requests</a>.</p>
 <p>Cloudant-Python can also make asynchronous requests by passing <code>async=True</code> to an object's constructor, like so:</p>
 <pre><code class="python">import cloudant
 
@@ -147,7 +147,7 @@ for doc in view:
 <p>If you instantiate an object with the <code>async=True</code> option, its HTTP request methods (such as <code>get</code> and <code>post</code>) will return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object (waiting until it arrives if necessary) use the <code>result</code> method, like so:</p>
 <pre><code class="python">import cloudant
 
-account = cloudant.Account()
+account = cloudant.Account(async=True)
 db = account['test']
 future = db.put()
 response = future.result()
