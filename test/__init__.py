@@ -31,11 +31,45 @@ class AsyncTest(ResourceTest):
     def setUp(self):
         super(AsyncTest, self).setUp()
         self.account = cloudant.Account(self.uri, async=True)
+        self.database = self.account.database(self.db_name)
+        self.document = self.database.document(self.doc_name)
 
-    def testGet(self):
+    def testAccount(self):
         future = self.account.get()
         response = future.result()
         response.raise_for_status()
+
+    def testDatabase(self):
+        future = self.database.put()
+        response = future.result()
+        response.raise_for_status()
+        del self.account[self.db_name]
+
+    def testDocument(self):
+        future = self.database.put()
+        response = future.result()
+        response.raise_for_status()
+        self.database[self.doc_name] = self.test_doc
+        future = self.document.merge(self.test_otherdoc)
+        response = future.result()
+        response.raise_for_status()
+        del self.account[self.db_name]
+
+    def testIndex(self):
+        future = self.database.put()
+        response = future.result()
+        response.raise_for_status()
+
+        future = self.database.bulk_docs(self.test_doc, self.test_otherdoc)
+        response = future.result()
+        response.raise_for_status()
+
+        total = []
+        for doc in self.database:
+            total.append(doc)
+        assert len(total) == 2
+
+        del self.account[self.db_name]
 
 class AccountTest(ResourceTest):
 
