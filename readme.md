@@ -40,7 +40,7 @@ print response.json()
 # {'ok': True}
 ```
 
-HTTP requests return [Response][response] objects, right from [Requests][requests].
+HTTP requests return [Response][responses] objects, right from [Requests][requests].
 
 Cloudant-Python can also make asynchronous requests by passing `async=True` to an object's constructor, like so:
 
@@ -144,7 +144,7 @@ If you instantiate an object with the `async=True` option, its HTTP request meth
 ```python
 import cloudant
 
-account = cloudant.Account()
+account = cloudant.Account(async=True)
 db = account['test']
 future = db.put()
 response = future.result()
