@@ -42,7 +42,7 @@
 <pre><code>pip install cloudant
 </code></pre>
 <h2>Usage</h2>
-<p>Cloudant-Python is an asynchronous wrapper around Python <a href="http://www.python-requests.org/en/latest/">Requests</a> for interacting with CouchDB or Cloudant instances. Check it out:</p>
+<p>Cloudant-Python is a wrapper around Python <a href="http://www.python-requests.org/en/latest/">Requests</a> for interacting with CouchDB or Cloudant instances. Check it out:</p>
 <pre><code class="python">import cloudant
 
 # connect to your account
@@ -52,19 +52,34 @@ account = cloudant.Account(USERNAME)
 
 # login, so we can make changes
 login = account.login(USERNAME, PASSWORD)
-assert login.result().status_code == 200
+assert login.status_code == 200
 
 # create a database object
 db = account.database('test')
 
 # now, create the database on the server
-future = db.put()
-response = future.result()
+response = db.put()
 print response.json()
 # {'ok': True}
 </code></pre>
 
-<p>HTTP requests return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which will await the return of the HTTP response. Call <code>result()</code> to get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object.</p>
+<p>HTTP requests return <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> objects, right from <a href="http://www.python-requests.org/en/latest/">Requests</a>.</p>
+<p>Cloudant-Python can also make asynchronous requests by passing <code>async=True</code> to an object's constructor, like so:</p>
+<pre><code class="python">import cloudant
+
+# connect to your account
+# in this case, https://garbados.cloudant.com
+USERNAME = 'garbados'
+account = cloudant.Account(USERNAME, async=True)
+
+# login, so we can make changes
+future = account.login(USERNAME, PASSWORD)
+# block until we get the response body
+login = future.result()
+assert login.status_code == 200
+</code></pre>
+
+<p>Asynchronous HTTP requests return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which will await the return of the HTTP response. Call <code>result()</code> to get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object.</p>
 <p>See the <a href="http://cloudant-labs.github.io/cloudant-python/#api">API reference</a> for all the details you could ever want.</p>
 <h2>Philosophy</h2>
 <p>Cloudant-Python is minimal, performant, and effortless. Check it out:</p>
@@ -92,11 +107,11 @@ doc = db.document('test_doc')
 resp = doc.put({
   '_id': 'hello_world',
   'herp': 'derp'
-  }).result()
+  })
 
 # delete the document
 rev = resp.json()['_rev']
-doc.delete(rev).result()
+doc.delete(rev).raise_for_status()
 
 # but this also creates a document
 db['hello_world'] = {'herp': 'derp'}
@@ -129,10 +144,10 @@ for doc in view:
 <li><code>http://localhost:5984/DB/_design/DOC/_view/INDEX</code> -&gt; <code>Account().database(DB).design(DOC).view(INDEX)</code></li>
 </ul>
 <h3>Asynchronous</h3>
-<p>HTTP request methods like <code>get</code> and <code>post</code> return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object (waiting until it arrives if necessary) use the <code>result</code> method, like so:</p>
+<p>If you instantiate an object with the <code>async=True</code> option, its HTTP request methods (such as <code>get</code> and <code>post</code>) will return <a href="http://docs.python.org/dev/library/concurrent.futures.html#future-objects">Future</a> objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the <a href="http://www.python-requests.org/en/latest/api/#requests.Response">Response</a> object (waiting until it arrives if necessary) use the <code>result</code> method, like so:</p>
 <pre><code class="python">import cloudant
 
-account = cloudant.Account()
+account = cloudant.Account(async=True)
 db = account['test']
 future = db.put()
 response = future.result()
@@ -186,9 +201,17 @@ assert doc.uri == otherdoc.uri
       <h2>Account</h2>
       <p>A account to a Cloudant or CouchDB account.</p>
 <pre><code>account = cloudant.Account()
-account.login(USERNAME, PASSWORD).result()
-print account.get().result().json()
-# {"couchdb": "Welcome", ...}
+response = account.login(USERNAME, PASSWORD)
+print response.json()
+# { "ok": True, ... }
+</code></pre>
+<p>Like all Cloudant-Python objects, pass <code>async=True</code>
+to make asynchronous requests, like this:</p>
+<pre><code>account = cloudant.Account(async=True)
+future = account.login(USERNAME, PASSWORD)
+response = future.result()
+print response.json()
+# { "ok": True, ... }
 </code></pre>
     </div>
   </div>
@@ -861,7 +884,11 @@ and then <code>PUT</code> the updated document back to the server.</p>
       <div class='code'>
         <pre><code>    def merge(self, change, **kwargs):
         
-        doc = self.get().result().json()
+        response = self.get()
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
+        doc = response.json()
         doc.update(change)
         return self.put(params=doc, **kwargs)
 </code></pre>
@@ -1090,7 +1117,11 @@ and then <code>PUT</code> the updated document back to the server.</p>
       <div class='code'>
         <pre><code>    def merge(self, change, **kwargs):
         
-        doc = self.get().result().json()
+        response = self.get()
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
+        doc = response.json()
         doc.update(change)
         return self.put(params=doc, **kwargs)
 </code></pre>
