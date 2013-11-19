@@ -35,7 +35,11 @@ class Database(Resource):
 
     def __setitem__(self, name, doc):
         """Creates `doc` with an ID of `name`."""
-        self.put(name, params=doc).result()
+        response = self.put(name, params=doc)
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
+        response.raise_for_status()
 
     def all_docs(self, **kwargs):
         """

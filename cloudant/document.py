@@ -23,7 +23,11 @@ class Document(Resource):
         Merge `change` into the document,
         and then `PUT` the updated document back to the server.
         """
-        doc = self.get().result().json()
+        response = self.get()
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
+        doc = response.json()
         doc.update(change)
         return self.put(params=doc, **kwargs)
 

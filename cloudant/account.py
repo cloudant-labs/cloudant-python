@@ -9,9 +9,18 @@ class Account(Resource):
     A account to a Cloudant or CouchDB account.
 
         account = cloudant.Account()
-        account.login(USERNAME, PASSWORD).result()
-        print account.get().result().json()
-        # {"couchdb": "Welcome", ...}
+        response = account.login(USERNAME, PASSWORD)
+        print response.json()
+        # { "ok": True, ... }
+
+    Like all Cloudant-Python objects, pass `async=True`
+    to make asynchronous requests, like this:
+
+        account = cloudant.Account(async=True)
+        future = account.login(USERNAME, PASSWORD)
+        response = future.result()
+        print response.json()
+        # { "ok": True, ... }
     """
 
     def __init__(self, uri="http://localhost:5984", **kwargs):
@@ -34,7 +43,11 @@ class Account(Resource):
         Blocks until the response returns,
         and raises an error if the deletion failed.
         """
-        return self.database(name, **self.opts).delete().result().raise_for_status()
+        response = self.database(name, **self.opts).delete()
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
+        response.raise_for_status()
 
     def all_dbs(self, **kwargs):
         """List all databases."""
