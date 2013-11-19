@@ -15,7 +15,7 @@ Install
 Usage
 -----
 
-Cloudant-Python is an asynchronous wrapper around Python
+Cloudant-Python is a wrapper around Python
 `Requests <http://www.python-requests.org/en/latest/>`__ for interacting
 with CouchDB or Cloudant instances. Check it out:
 
@@ -30,18 +30,40 @@ with CouchDB or Cloudant instances. Check it out:
 
     # login, so we can make changes
     login = account.login(USERNAME, PASSWORD)
-    assert login.result().status_code == 200
+    assert login.status_code == 200
 
     # create a database object
     db = account.database('test')
 
     # now, create the database on the server
-    future = db.put()
-    response = future.result()
+    response = db.put()
     print response.json()
     # {'ok': True}
 
 HTTP requests return
+`Response <http://www.python-requests.org/en/latest/api/#requests.Response>`__
+objects, right from
+`Requests <http://www.python-requests.org/en/latest/>`__.
+
+Cloudant-Python can also make asynchronous requests by passing
+``async=True`` to an object's constructor, like so:
+
+.. code:: python
+
+    import cloudant
+
+    # connect to your account
+    # in this case, https://garbados.cloudant.com
+    USERNAME = 'garbados'
+    account = cloudant.Account(USERNAME, async=True)
+
+    # login, so we can make changes
+    future = account.login(USERNAME, PASSWORD)
+    # block until we get the response body
+    login = future.result()
+    assert login.status_code == 200
+
+Asynchronous HTTP requests return
 `Future <http://docs.python.org/dev/library/concurrent.futures.html#future-objects>`__
 objects, which will await the return of the HTTP response. Call
 ``result()`` to get the
@@ -53,12 +75,12 @@ reference <http://cloudant-labs.github.io/cloudant-python/#api>`__ for
 all the details you could ever want.
 
 Philosophy
-~~~~~~~~~~
+----------
 
 Cloudant-Python is minimal, performant, and effortless. Check it out:
 
 Pythonisms
-^^^^^^^^^^
+~~~~~~~~~~
 
 Cloudant and CouchDB expose REST APIs that map easily into native Python
 objects. As much as possible, Cloudant-Python uses native Python objects
@@ -94,11 +116,11 @@ Pythonic shortcuts to those methods. For example:
     resp = doc.put({
       '_id': 'hello_world',
       'herp': 'derp'
-      }).result()
+      })
 
     # delete the document
     rev = resp.json()['_rev']
-    doc.delete(rev).result()
+    doc.delete(rev).raise_for_status()
 
     # but this also creates a document
     db['hello_world'] = {'herp': 'derp'}
@@ -107,7 +129,7 @@ Pythonic shortcuts to those methods. For example:
     del account[db_name]
 
 Iterate over Indexes
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~
 
 Indexes, such as `views <https://cloudant.com/for-developers/views/>`__
 and Cloudant's `search
@@ -134,7 +156,7 @@ Cloudant-Python yields documents only as you consume them, so you only
 load into memory the documents you're using.
 
 Special Endpoints
-^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~
 
 If CouchDB has a special endpoint for something, it's in Cloudant-Python
 as a special method, so any special circumstances are taken care of
@@ -149,9 +171,10 @@ Cloudant-Python as ``Object.METHOD``. For example:
    ``Account().database(DB).design(DOC).view(INDEX)``
 
 Asynchronous
-^^^^^^^^^^^^
+~~~~~~~~~~~~
 
-HTTP request methods like ``get`` and ``post`` return
+If you instantiate an object with the ``async=True`` option, its HTTP
+request methods (such as ``get`` and ``post``) will return
 `Future <http://docs.python.org/dev/library/concurrent.futures.html#future-objects>`__
 objects, which represent an eventual response. This allows your code to
 keep executing while the request is off doing its business in
@@ -164,7 +187,7 @@ method, like so:
 
     import cloudant
 
-    account = cloudant.Account()
+    account = cloudant.Account(async=True)
     db = account['test']
     future = db.put()
     response = future.result()
@@ -176,7 +199,7 @@ As a result, any methods which must make an HTTP request return a
 object.
 
 Option Inheritance
-^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~
 
 If you use one object to create another, the child will inherit the
 parents' settings. So, you can create a ``Database`` object explicitly,
