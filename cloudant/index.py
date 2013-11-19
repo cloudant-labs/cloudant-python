@@ -21,7 +21,10 @@ class Index(Resource):
     """
 
     def __iter__(self):
-        response = self.get(stream=True).result()
+        response = self.get(stream=True)
+        # block until result if the object is using async
+        if hasattr(response, 'result'):
+            response = response.result()
         for line in response.iter_lines():
             if line:
                 if line[-1] == ',':

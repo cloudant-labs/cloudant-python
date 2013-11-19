@@ -1,4 +1,5 @@
 from requests_futures.sessions import FuturesSession
+import requests
 import urlparse
 import json
 import copy
@@ -20,11 +21,14 @@ class Resource(object):
         self.uri = uri
         self.uri_parts = urlparse.urlparse(self.uri)
 
-        if 'session' in kwargs.keys():
+        if kwargs.get('session'):
             self._session = kwargs['session']
             del kwargs['session']
-        else:
+        elif kwargs.get('async'):
             self._session = FuturesSession()
+            del kwargs['async']
+        else:
+            self._session = requests.Session()
 
         self._set_options(**kwargs)
 

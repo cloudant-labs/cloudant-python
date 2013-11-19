@@ -6,6 +6,7 @@
 [![PyPi downloads](https://pypip.in/d/cloudant/badge.png)](https://crate.io/packages/cloudant/)
 
 [futures]: http://docs.python.org/dev/library/concurrent.futures.html#future-objects
+[requests]: http://www.python-requests.org/en/latest/
 [responses]: http://www.python-requests.org/en/latest/api/#requests.Response
 
 An effortless Cloudant / CouchDB interface for Python.
@@ -16,7 +17,7 @@ An effortless Cloudant / CouchDB interface for Python.
 
 ## Usage
 
-Cloudant-Python is an asynchronous wrapper around Python [Requests](http://www.python-requests.org/en/latest/) for interacting with CouchDB or Cloudant instances. Check it out:
+Cloudant-Python is a wrapper around Python [Requests][requests] for interacting with CouchDB or Cloudant instances. Check it out:
 
 ```python
 import cloudant
@@ -28,19 +29,37 @@ account = cloudant.Account(USERNAME)
 
 # login, so we can make changes
 login = account.login(USERNAME, PASSWORD)
-assert login.result().status_code == 200
+assert login.status_code == 200
 
 # create a database object
 db = account.database('test')
 
 # now, create the database on the server
-future = db.put()
-response = future.result()
+response = db.put()
 print response.json()
 # {'ok': True}
 ```
 
-HTTP requests return [Future][futures] objects, which will await the return of the HTTP response. Call `result()` to get the [Response][responses] object.
+HTTP requests return [Response][responses] objects, right from [Requests][requests].
+
+Cloudant-Python can also make asynchronous requests by passing `async=True` to an object's constructor, like so:
+
+```python
+import cloudant
+
+# connect to your account
+# in this case, https://garbados.cloudant.com
+USERNAME = 'garbados'
+account = cloudant.Account(USERNAME, async=True)
+
+# login, so we can make changes
+future = account.login(USERNAME, PASSWORD)
+# block until we get the response body
+login = future.result()
+assert login.status_code == 200
+```
+
+Asynchronous HTTP requests return [Future][futures] objects, which will await the return of the HTTP response. Call `result()` to get the [Response][responses] object.
 
 See the [API reference](http://cloudant-labs.github.io/cloudant-python/#api) for all the details you could ever want.
 
@@ -77,11 +96,11 @@ doc = db.document('test_doc')
 resp = doc.put({
   '_id': 'hello_world',
   'herp': 'derp'
-  }).result()
+  })
 
 # delete the document
 rev = resp.json()['_rev']
-doc.delete(rev).result()
+doc.delete(rev).raise_for_status()
 
 # but this also creates a document
 db['hello_world'] = {'herp': 'derp'}
@@ -120,12 +139,12 @@ If CouchDB has a special endpoint for something, it's in Cloudant-Python as a sp
 
 ### Asynchronous
 
-HTTP request methods like `get` and `post` return [Future][futures] objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the [Response][responses] object (waiting until it arrives if necessary) use the `result` method, like so:
+If you instantiate an object with the `async=True` option, its HTTP request methods (such as `get` and `post`) will return [Future][futures] objects, which represent an eventual response. This allows your code to keep executing while the request is off doing its business in cyberspace. To get the [Response][responses] object (waiting until it arrives if necessary) use the `result` method, like so:
 
 ```python
 import cloudant
 
-account = cloudant.Account()
+account = cloudant.Account(async=True)
 db = account['test']
 future = db.put()
 response = future.result()
