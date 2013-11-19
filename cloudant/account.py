@@ -6,7 +6,7 @@ import urlparse
 class Account(Resource):
 
     """
-    A account to a Cloudant or CouchDB account.
+    An account to a Cloudant or CouchDB account.
 
         account = cloudant.Account()
         response = account.login(USERNAME, PASSWORD)
