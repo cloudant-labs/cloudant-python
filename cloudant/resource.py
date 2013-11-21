@@ -26,9 +26,11 @@ class Resource(object):
             del kwargs['session']
         elif kwargs.get('async'):
             self._session = FuturesSession()
-            del kwargs['async']
         else:
             self._session = requests.Session()
+        
+        if kwargs.has_key('async'):
+            del kwargs['async']
 
         self._set_options(**kwargs)
 
