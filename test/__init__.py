@@ -34,6 +34,12 @@ class AsyncTest(ResourceTest):
         self.database = self.account.database(self.db_name)
         self.document = self.database.document(self.doc_name)
 
+    def testSync(self):
+        account = cloudant.Account(async=False)
+        database = account[self.db_name]
+        database.put().raise_for_status()
+        database.delete().raise_for_status()
+
     def testAccount(self):
         future = self.account.get()
         response = future.result()
