@@ -20,8 +20,8 @@ class Index(Resource):
     for how to do that.
     """
 
-    def __iter__(self):
-        response = self.get(stream=True)
+    def __iter__(self, **kwargs):
+        response = self.get(stream=True, **kwargs)
         # block until result if the object is using async
         if hasattr(response, 'result'):
             response = response.result()
@@ -34,3 +34,6 @@ class Index(Resource):
                 except ValueError:
                     # if we can't decode a line, ignore it
                     pass
+
+    def iter(self, **kwargs):
+        return self.__iter__(**kwargs)
