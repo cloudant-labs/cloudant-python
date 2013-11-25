@@ -253,10 +253,13 @@ class IndexTest(ResourceTest):
         """
         for doc in [self.test_doc, self.test_otherdoc]:
             assert self.db.post(params=doc).status_code == 201
+
+        docs = []
         for derp in self.db.all_docs():
-            pass
-        for derp in self.db.all_docs().iter():
-            pass
+            docs.append(derp['id'])
+
+        for derp in self.db.all_docs().iter(params=dict(descending=True)):
+            assert derp['id'] in docs
 
     def tearDown(self):
         assert self.db.delete().status_code == 200
