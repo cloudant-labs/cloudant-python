@@ -1,4 +1,5 @@
 from requests_futures.sessions import FuturesSession
+import urllib
 import requests
 import urlparse
 import json
@@ -67,11 +68,19 @@ class Resource(object):
         # kwargs supercede self.opts
         opts = copy.copy(self.opts)
         opts.update(kwargs)
+
         # normalize `params` kwarg according to method
-        if method in ['post', 'put']:
-            if 'params' in opts:
+        if 'params' in opts:
+            if method in ['post', 'put']:
                 opts['data'] = json.dumps(opts['params'])
-                del kwargs['params']
+            else:
+                # cloudant breaks on True and False, so lowercase it
+                params = urllib.urlencode(opts['params'])
+                params = params.replace('True', 'true')
+                params = params.replace('False', 'false')
+                path = '?'.join([path, params])
+            del opts['params']
+
         # make the request
         future = getattr(
             self._session,

@@ -261,6 +261,11 @@ class IndexTest(ResourceTest):
         for derp in self.db.all_docs().iter(params=dict(descending=True, reduce=False)):
             assert docs.pop() == derp['id']
 
+    def testQueryParams(self):
+        view = self.db.all_docs()
+        response = view.get(params=dict(reduce=False))
+        assert 'reduce=False' not in response.url
+
     def tearDown(self):
         assert self.db.delete().status_code == 200
 
