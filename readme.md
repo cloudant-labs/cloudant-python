@@ -125,6 +125,9 @@ for doc in db:
 for doc in view:
   # and so does this!
   pass
+for doc in view.iter(descending=True):
+  # use `iter` to pass options to a view and then iterate over them
+  pass
 ```
 
 [Behind the scenes](https://github.com/cloudant-labs/cloudant-python/blob/master/cloudant/index.py#L23-L33), Cloudant-Python yields documents only as you consume them, so you only load into memory the documents you're using.
