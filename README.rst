@@ -113,7 +113,7 @@ Pythonic shortcuts to those methods. For example:
     doc = db.document('test_doc')
 
     # create the document
-    resp = doc.put({
+    resp = doc.put(params={
       '_id': 'hello_world',
       'herp': 'derp'
       })
@@ -148,6 +148,9 @@ iterators. Check it out:
       pass
     for doc in view:
       # and so does this!
+      pass
+    for doc in view.iter(descending=True):
+      # use `iter` to pass options to a view and then iterate over them
       pass
 
 `Behind the

@@ -93,7 +93,7 @@ db = account.database(db_name)
 doc = db.document('test_doc')
 
 # create the document
-resp = doc.put({
+resp = doc.put(params={
   '_id': 'hello_world',
   'herp': 'derp'
   })
