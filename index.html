@@ -104,7 +104,7 @@ db = account.database(db_name)
 doc = db.document('test_doc')
 
 # create the document
-resp = doc.put({
+resp = doc.put(params={
   '_id': 'hello_world',
   'herp': 'derp'
   })
@@ -132,6 +132,9 @@ for doc in db:
   pass
 for doc in view:
   # and so does this!
+  pass
+for doc in view.iter(descending=True):
+  # use `iter` to pass options to a view and then iterate over them
   pass
 </code></pre>
 
