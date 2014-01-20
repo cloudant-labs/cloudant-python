@@ -80,7 +80,7 @@ class Resource(object):
                 for key, value in params.items():
                     if value in [True, False]:
                         params[key] = str(value).lower()
-                    elif type(value) in [list, dict]:
+                    elif type(value) in [list, dict, tuple]:
                         try:
                             params[key] = json.dumps(value)
                         except ValueError as e:
