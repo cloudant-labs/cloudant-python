@@ -116,9 +116,12 @@ class AccountTest(ResourceTest):
         self.db = self.account.database(self.db_name)
         assert self.db.put().status_code == 201
 
-        params = dict(create_target=True)
-        assert self.account.replicate(
-            self.db_name, self.otherdb_name, params=params).status_code == 200
+        resp = self.account.replicate(
+            self.db_name,
+            self.otherdb_name,
+            params=dict(create_target=True))
+        print resp.text, resp.url
+        assert resp.status_code == 200
 
         assert self.db.delete().status_code == 200
         del self.account[self.otherdb_name]

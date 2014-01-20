@@ -73,13 +73,20 @@ class Resource(object):
         if 'params' in opts:
             if method in ['post', 'put']:
                 opts['data'] = json.dumps(opts['params'])
+                del opts['params']
             else:
                 # cloudant breaks on True and False, so lowercase it
-                params = urllib.urlencode(opts['params'])
-                params = params.replace('True', 'true')
-                params = params.replace('False', 'false')
-                path = '?'.join([path, params])
-            del opts['params']
+                params = opts['params']
+                for key, value in params.items():
+                    if value in [True, False]:
+                        params[key] = str(value).lower()
+                    elif type(value) in [list, dict]:
+                        try:
+                            params[key] = json.dumps(value)
+                        except ValueError as e:
+                            # do nothing
+                            pass
+                opts['params'] = params
 
         # make the request
         future = getattr(
