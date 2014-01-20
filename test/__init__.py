@@ -120,7 +120,6 @@ class AccountTest(ResourceTest):
             self.db_name,
             self.otherdb_name,
             params=dict(create_target=True))
-        print resp.text, resp.url
         assert resp.status_code == 200
 
         assert self.db.delete().status_code == 200
