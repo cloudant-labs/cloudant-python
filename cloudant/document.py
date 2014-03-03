@@ -27,7 +27,12 @@ class Document(Resource):
         # block until result if the object is using async
         if hasattr(response, 'result'):
             response = response.result()
-        doc = response.json()
+        # handle upserts
+        if response.status_code == 404:
+            doc = {}
+        else:
+            doc = response.json()
+        # merge!
         doc.update(change)
         return self.put(params=doc, **kwargs)
 

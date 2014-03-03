@@ -204,7 +204,9 @@ class DocumentTest(ResourceTest):
         self.db[self.doc_name]
 
     def testMerge(self):
-        assert self.doc.put(params=self.test_doc).status_code == 201
+        # test upsert
+        assert self.doc.merge(self.test_doc).status_code == 201
+        # test merge
         assert self.doc.merge(self.test_otherdoc).status_code == 201
 
     def testAttachment(self):
