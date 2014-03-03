@@ -158,7 +158,12 @@ class DatabaseTest(ResourceTest):
             pass
 
     def testAllDocs(self):
-        self.db.all_docs()
+        resp = self.db.all_docs().get()
+        assert resp.status_code == 200
+
+    def testAllDocsWithKeys(self):
+        resp = self.db.all_docs().get(params={'keys':['hello', 'goodbye']})
+        assert resp.status_code == 200
 
     def testChanges(self):
         assert self.db.changes().status_code == 200
