@@ -24,14 +24,17 @@ class Document(Resource):
         and then `PUT` the updated document back to the server.
         """
         response = self.get()
-        # block until result if the object is using async
+        # block until result if the object is using async/is a future
         if hasattr(response, 'result'):
             response = response.result()
+
         # handle upserts
         if response.status_code == 404:
             doc = {}
         else:
+            response.raise_for_status()
             doc = response.json()
+
         # merge!
         doc.update(change)
         return self.put(params=doc, **kwargs)
