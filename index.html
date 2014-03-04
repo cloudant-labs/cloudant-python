@@ -1336,10 +1336,21 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
           <a class='octothorpe' href='#Index-iter'>#</a>
         </div>
         <h3>iter</h3>
-        
+        <p>Like the magic method <code>__iter__</code>, but allows you to
+pass query parameters, like so:</p>
+<pre><code>view = db.view('...')
+options = {
+    'key': 'thegoodstuff',
+    'include_docs': True
+}
+for row in view.iter(params=options):
+    # emits only rows with the key 'thegoodstuff'
+    # with each row's emitting document
+</code></pre>
       </div>
       <div class='code'>
         <pre><code>    def iter(self, **kwargs):
+        
         return self.__iter__(**kwargs)
 </code></pre>
       </div>
