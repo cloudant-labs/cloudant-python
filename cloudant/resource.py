@@ -1,5 +1,4 @@
 from requests_futures.sessions import FuturesSession
-import urllib
 import requests
 import urlparse
 import json
