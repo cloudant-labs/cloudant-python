@@ -36,4 +36,17 @@ class Index(Resource):
                     pass
 
     def iter(self, **kwargs):
+        """
+        Like the magic method `__iter__`, but allows you to
+        pass query parameters, like so:
+
+            view = db.view('...')
+            options = {
+                'key': 'thegoodstuff',
+                'include_docs': True
+            }
+            for row in view.iter(params=options):
+                # emits only rows with the key 'thegoodstuff'
+                # with each row's emitting document
+        """
         return self.__iter__(**kwargs)
