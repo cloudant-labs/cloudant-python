@@ -21,6 +21,13 @@ class Account(Resource):
         response = future.result()
         print response.json()
         # { "ok": True, ... }
+
+    Although you can use `login` to request a cookie,
+    you can also set `account._session.auth` to make Cloudant-Python
+    use those credentials on every request, like this:
+
+        account = cloudant.Account()
+        account._session.auth = (username, password)
     """
 
     def __init__(self, uri="http://localhost:5984", **kwargs):
