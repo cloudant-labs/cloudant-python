@@ -136,7 +136,7 @@ for doc in view.iter(descending=True):
 
 If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. As a rule, any endpoint like `_METHOD` is in Cloudant-Python as `Object.METHOD`. For example:
 
-* `https://garbados.cloudant.com/_all_dbs` -> `Account('garbados').all_dbs`
+* `https://garbados.cloudant.com/_all_dbs` -> `Account('garbados').all_dbs()`
 * `http://localhost:5984/DB/_all_docs` -> `Account().database(DB).all_docs()`
 * `http://localhost:5984/DB/_design/DOC/_view/INDEX` -> `Account().database(DB).design(DOC).view(INDEX)`
 
