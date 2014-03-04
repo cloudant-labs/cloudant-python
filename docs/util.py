@@ -22,7 +22,9 @@ def get_first_indent(string):
 
 def get_docs(method):
     # get the source code
-    source = inspect.getsource(method).replace(method.__doc__, '').replace('""""""', '')
+    source = inspect.getsource(method)
+    if method.__doc__:
+        source = source.replace(method.__doc__, '').replace('""""""', '')
 
     # get the docstring
     if method.__doc__:
