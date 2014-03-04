@@ -142,7 +142,7 @@ for doc in view.iter(descending=True):
 <h3>Special Endpoints</h3>
 <p>If CouchDB has a special endpoint for something, it's in Cloudant-Python as a special method, so any special circumstances are taken care of automagically. As a rule, any endpoint like <code>_METHOD</code> is in Cloudant-Python as <code>Object.METHOD</code>. For example:</p>
 <ul>
-<li><code>https://garbados.cloudant.com/_all_dbs</code> -&gt; <code>Account('garbados').all_dbs</code></li>
+<li><code>https://garbados.cloudant.com/_all_dbs</code> -&gt; <code>Account('garbados').all_dbs()</code></li>
 <li><code>http://localhost:5984/DB/_all_docs</code> -&gt; <code>Account().database(DB).all_docs()</code></li>
 <li><code>http://localhost:5984/DB/_design/DOC/_view/INDEX</code> -&gt; <code>Account().database(DB).design(DOC).view(INDEX)</code></li>
 </ul>
@@ -1336,10 +1336,21 @@ with <code>path</code>. <code>kwargs</code> are passed directly to Requests.</p>
           <a class='octothorpe' href='#Index-iter'>#</a>
         </div>
         <h3>iter</h3>
-        
+        <p>Like the magic method <code>__iter__</code>, but allows you to
+pass query parameters, like so:</p>
+<pre><code>view = db.view('...')
+options = {
+    'key': 'thegoodstuff',
+    'include_docs': True
+}
+for row in view.iter(params=options):
+    # emits only rows with the key 'thegoodstuff'
+    # with each row's emitting document
+</code></pre>
       </div>
       <div class='code'>
         <pre><code>    def iter(self, **kwargs):
+        
         return self.__iter__(**kwargs)
 </code></pre>
       </div>
