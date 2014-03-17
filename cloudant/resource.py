@@ -1,8 +1,18 @@
-from requests_futures.sessions import FuturesSession
-import requests
+try:
+    from requests_futures.sessions import FuturesSession
+    requests_futures_available = True
+except ImportError:
+    requests_futures_available = False
+
 import urlparse
 import json
 import copy
+
+import requests
+
+
+class RequestsFutureNotAvailable(Exception):
+    message = "Please install request_sessions before proceeding."
 
 
 class Resource(object):
@@ -26,6 +36,8 @@ class Resource(object):
             del kwargs['session']
         elif kwargs.has_key('async'):
             if kwargs['async']:
+                if not requests_futures_available:
+                    raise RequestsFutureNotAvailable()
                 self._session = FuturesSession()
             else:
                 self._session = requests.Session()
