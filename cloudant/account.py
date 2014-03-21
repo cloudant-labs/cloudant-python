@@ -1,6 +1,10 @@
 from .resource import Resource
 from .database import Database
-import urlparse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 
 
 class Account(Resource):

@@ -1,14 +1,20 @@
+import json
+import copy
+
+import requests
+
+
 try:
     from requests_futures.sessions import FuturesSession
     requests_futures_available = True
 except ImportError:
     requests_futures_available = False
 
-import urlparse
-import json
-import copy
 
-import requests
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 
 
 class RequestsFutureNotAvailable(Exception):

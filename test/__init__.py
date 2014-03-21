@@ -1,7 +1,6 @@
 import cloudant
 from collections import defaultdict
 import unittest
-import os
 
 
 class ResourceTest(unittest.TestCase):
@@ -137,10 +136,10 @@ class DatabaseTest(ResourceTest):
 
     def setUp(self):
         super(DatabaseTest, self).setUp()
-        
+
         db_name = '/'.join([self.uri, self.db_name])
         self.db = cloudant.Database(db_name)
-        
+
         response = self.db.put()
         response.raise_for_status()
 
