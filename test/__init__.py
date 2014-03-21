@@ -10,7 +10,7 @@ class ResourceTest(unittest.TestCase):
 
         names = cloudant.Account(self.uri).uuids(4).json()['uuids']
         # database names must start with a letter
-        names = map(lambda name: 'a' + name, names)
+        names = ['a' + name for name in names]
         self.db_name = names[0]
         self.otherdb_name = names[1]
         self.doc_name = names[2]

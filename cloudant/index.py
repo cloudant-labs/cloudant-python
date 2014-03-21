@@ -31,7 +31,7 @@ class Index(Resource):
                     line = line[:-1]
                 try:
                     yield json.loads(line)
-                except ValueError:
+                except (TypeError, ValueError):
                     # if we can't decode a line, ignore it
                     pass
 

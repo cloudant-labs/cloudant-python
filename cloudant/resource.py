@@ -40,7 +40,7 @@ class Resource(object):
         if kwargs.get('session'):
             self._session = kwargs['session']
             del kwargs['session']
-        elif kwargs.has_key('async'):
+        elif 'async' in kwargs:
             if kwargs['async']:
                 if not requests_futures_available:
                     raise RequestsFutureNotAvailable()
