@@ -26,6 +26,7 @@ class Index(Resource):
         if hasattr(response, 'result'):
             response = response.result()
         for line in response.iter_lines():
+            line = line.decode('utf-8')
             if line:
                 if line[-1] == ',':
                     line = line[:-1]
