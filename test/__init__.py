@@ -1,5 +1,7 @@
 import cloudant
 from collections import defaultdict
+from types import GeneratorType
+import time
 import unittest
 
 
@@ -168,10 +170,28 @@ class DatabaseTest(ResourceTest):
         assert resp.status_code == 200
 
     def testChanges(self):
-        assert self.db.changes().status_code == 200
-        assert self.db.changes(params={
-            'feed': 'continuous'
-        }).status_code == 200
+        assert isinstance(self.db.changes(), GeneratorType)
+
+    def testChangesContinuous(self):
+        def iterator(iterable):
+            _iterable = iter(iterable)
+            def wrapper():
+                for item in _iterable:
+                    return item
+            return wrapper
+
+        self.db.bulk_docs(self.test_doc, self.test_otherdoc)
+
+        resp = self.db.changes(params={
+            'feed': 'continuous',
+            'timeout': 2000
+        })
+        start = time.time()
+        _next = iterator(resp)
+        _next()
+        _next()
+        assert time.time() - start < 2, \
+            'should return changes event for both documents before block'
 
     def testViewCleanup(self):
         assert self.db.view_cleanup().status_code == 202
