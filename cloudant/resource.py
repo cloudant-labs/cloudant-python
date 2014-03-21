@@ -102,12 +102,7 @@ class Resource(object):
                 opts['params'] = params
 
         # make the request
-        future = getattr(
-            self._session,
-            method)(
-                self._make_url(
-                    path),
-                **opts)
+        future = getattr(self._session, method)(self._make_url(path), **opts)
         return future
 
     def head(self, path='', **kwargs):
