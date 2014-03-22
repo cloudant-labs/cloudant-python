@@ -220,6 +220,10 @@ class DocumentTest(ResourceTest):
     def testAttachment(self):
         self.doc.attachment('file')
 
+    def testNoLoginLogout(self):
+        assert not hasattr(self.doc, 'login')
+        assert not hasattr(self.doc, 'logout')
+
     def tearDown(self):
         assert self.db.delete().status_code == 200
 

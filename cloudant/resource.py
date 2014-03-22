@@ -104,23 +104,6 @@ class Resource(object):
                 **opts)
         return future
 
-    def session(self, **kwargs):
-        """Get current user's authentication and authorization status."""
-        return self.get(self._reset_path('_session'), **kwargs)
-
-    def login(self, username, password, **kwargs):
-        """Authenticate the connection via cookie."""
-        # set headers, body explicitly
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-        data = "name=%s&password=%s" % (username, password)
-        return self.post(self._reset_path('_session'), headers=headers, data=data, **kwargs)
-
-    def logout(self, **kwargs):
-        """De-authenticate the connection's cookie."""
-        return self.delete(self._reset_path('_session'), **kwargs)
-
     def head(self, path='', **kwargs):
         """
         Make a HEAD request against the object's URI joined
