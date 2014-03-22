@@ -121,6 +121,13 @@ class Resource(object):
         """De-authenticate the connection's cookie."""
         return self.delete(self._reset_path('_session'), **kwargs)
 
+    def head(self, path='', **kwargs):
+        """
+        Make a HEAD request against the object's URI joined
+        with `path`. `kwargs` are passed directly to Requests.
+        """
+        return self._make_request('head', path, **kwargs)
+
     def get(self, path='', **kwargs):
         """
         Make a GET request against the object's URI joined
