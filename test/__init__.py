@@ -1,8 +1,10 @@
 import cloudant
 from collections import defaultdict
 from types import GeneratorType
+import signal
 import time
 import unittest
+
 
 
 class ResourceTest(unittest.TestCase):
@@ -192,6 +194,30 @@ class DatabaseTest(ResourceTest):
         _next()
         assert time.time() - start < 2, \
             'should return changes event for both documents before block'
+
+    def testChangesFeedEmitsHeartbeats(self):
+        def signal_handler(signum, frame):
+            raise Exception("Timed out!")
+
+        def loop():
+            feed = self.db.changes(params={
+                'feed': 'continuous',
+                'timeout': 2000,
+                'heartbeat': 1000
+            }, emit_heartbeats=True)
+            for item in feed:
+                stack.append(item)
+
+        stack = []
+        self.db.bulk_docs(self.test_doc, self.test_otherdoc)
+
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(3)
+
+        try:
+            loop()
+        except Exception:
+            assert stack[-1] is None
 
     def testViewCleanup(self):
         assert self.db.view_cleanup().status_code == 202

@@ -90,13 +90,15 @@ class Database(Resource):
                     kwargs['stream'] = True
                     size = 1  # 1 byte because we don't want to hold the last
                               # record in memory buffer in awaiting for new data
+        emit_heartbeats = kwargs.pop('emit_heartbeats', False)
 
         response = self.get('_changes', **kwargs)
         response.raise_for_status()
 
-        # TODO: this code duplicates index.Index.__iter__
         for line in response.iter_lines(chunk_size=size):
             if not line:
+                if emit_heartbeats:
+                    yield None
                 continue
             line = line.decode('utf-8')
             if line[-1] == ',':
