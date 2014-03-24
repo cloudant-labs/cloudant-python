@@ -144,6 +144,9 @@ class DatabaseTest(ResourceTest):
         response = self.db.put()
         response.raise_for_status()
 
+    def testHead(self):
+        assert self.db.head().status_code == 200
+
     def testGet(self):
         assert self.db.get().status_code == 200
 
