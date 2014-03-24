@@ -8,7 +8,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='cloudant',
-      version='0.5.6',
+      version='0.5.7',
       description='Asynchronous Cloudant / CouchDB Interface',
       author='Max Thayer',
       author_email='garbados@gmail.com',
