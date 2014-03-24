@@ -1,6 +1,10 @@
 from .resource import Resource
 from .database import Database
-import urlparse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 
 
 class Account(Resource):
@@ -37,7 +41,7 @@ class Account(Resource):
 
     def database(self, name, **kwargs):
         """Create a `Database` object prefixed with this account's URL."""
-        opts = dict(self.opts.items() + kwargs.items())
+        opts = dict(self.opts, **kwargs)
         return Database(self._make_url(name), session=self._session, **opts)
 
     def __getitem__(self, name):

@@ -16,7 +16,7 @@ class Database(Resource):
         """
         Create a `Document` object from `name`.
         """
-        opts = dict(self.opts.items() + kwargs.items())
+        opts = dict(self.opts, **kwargs)
         return Document(self._make_url(name), session=self._session, **opts)
 
     def design(self, name, **kwargs):
@@ -26,7 +26,7 @@ class Database(Resource):
             db.design('test')
             # refers to DB/_design/test
         """
-        opts = dict(self.opts.items() + kwargs.items())
+        opts = dict(self.opts, **kwargs)
         return Design(self._make_url('/'.join(['_design', name])), session=self._session, **opts)
 
     def __getitem__(self, name):

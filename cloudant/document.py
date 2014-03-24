@@ -15,7 +15,7 @@ class Document(Resource):
         Create an `Attachment` object from `name` and the settings
         for the current database.
         """
-        opts = dict(self.opts.items() + kwargs.items())
+        opts = dict(self.opts, **kwargs)
         return Attachment(self._make_url(name), session=self._session, **opts)
 
     def merge(self, change, **kwargs):

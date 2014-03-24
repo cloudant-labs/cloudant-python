@@ -16,7 +16,7 @@ class Design(Document):
             index = doc.index('_view/index-name')
             # refers to /DB/_design/DOC/_view/index-name
         """
-        opts = dict(self.opts.items() + kwargs.items())
+        opts = dict(self.opts, **kwargs)
         return Index(self._make_url(path), session=self._session, **opts)
 
     def view(self, function, **kwargs):

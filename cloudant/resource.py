@@ -1,14 +1,20 @@
+import json
+import copy
+
+import requests
+
+
 try:
     from requests_futures.sessions import FuturesSession
     requests_futures_available = True
 except ImportError:
     requests_futures_available = False
 
-import urlparse
-import json
-import copy
 
-import requests
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse
 
 
 class RequestsFutureNotAvailable(Exception):
@@ -34,7 +40,7 @@ class Resource(object):
         if kwargs.get('session'):
             self._session = kwargs['session']
             del kwargs['session']
-        elif kwargs.has_key('async'):
+        elif 'async' in kwargs:
             if kwargs['async']:
                 if not requests_futures_available:
                     raise RequestsFutureNotAvailable()
@@ -96,12 +102,7 @@ class Resource(object):
                 opts['params'] = params
 
         # make the request
-        future = getattr(
-            self._session,
-            method)(
-                self._make_url(
-                    path),
-                **opts)
+        future = getattr(self._session, method)(self._make_url(path), **opts)
         return future
 
     def head(self, path='', **kwargs):
