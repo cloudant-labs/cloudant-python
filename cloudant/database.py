@@ -1,3 +1,4 @@
+import json
 from .resource import Resource
 from .document import Document
 from .design import Design
@@ -82,12 +83,27 @@ class Database(Resource):
         For more information about the `_changes` feed, see
         [the docs](http://docs.cloudant.com/api/database.html#obtaining-a-list-of-changes).
         """
+        size = 512  # requests default chunk size value
         if 'params' in kwargs:
             if 'feed' in kwargs['params']:
                 if kwargs['params']['feed'] == 'continuous':
                     kwargs['stream'] = True
+                    size = 1  # 1 byte because we don't want to hold the last
+                              # record in memory buffer in awaiting for new data
+        emit_heartbeats = kwargs.pop('emit_heartbeats', False)
 
-        return self.get('_changes', **kwargs)
+        response = self.get('_changes', **kwargs)
+        response.raise_for_status()
+
+        for line in response.iter_lines(chunk_size=size):
+            if not line:
+                if emit_heartbeats:
+                    yield None
+                continue
+            line = line.decode('utf-8')
+            if line[-1] == ',':
+                line = line[:-1]
+            yield json.loads(line)
 
     def missing_revs(self, revs, **kwargs):
         """
