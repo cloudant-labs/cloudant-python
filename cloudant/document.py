@@ -47,3 +47,23 @@ class Document(Resource):
             doc.delete(rev)
         """
         return super(Document, self).delete(params={'rev': rev}, **kwargs)
+
+    def __del__(self):
+        """
+        Shortcut to synchronously deleting the document from the database.
+        For example:
+
+            del db['docKey']
+        """
+        response = self.get()
+        # block until result if the object is using async/is a future
+        if hasattr(response, 'result'):
+            response = response.result()
+        response.raise_for_status()
+        doc = response.json()
+        deletion = self.delete(self, doc['_rev'])
+        # block until result if the object is using async/is a future
+        if hasattr(deletion, 'result'):
+            deletion = deletion.result()
+        deletion.raise_for_status()
+        
