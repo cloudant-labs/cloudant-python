@@ -87,7 +87,8 @@ assert login.status_code == 200
 <p>Cloudant and CouchDB expose REST APIs that map easily into native Python objects. As much as possible, Cloudant-Python uses native Python objects as shortcuts to the raw API, so that such convenience never obscures what's going on underneath. For example:</p>
 <pre><code class="python">import cloudant
 
-account = cloudant.Account('garbados')
+# connect to http://localhost:5984
+account = cloudant.Account()
 db = account.database('test')
 same_db = account['test']
 assert db.uri == same_db.uri
