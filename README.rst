@@ -91,7 +91,8 @@ what's going on underneath. For example:
 
     import cloudant
 
-    account = cloudant.Account('garbados')
+    # connect to http://localhost:5984
+    account = cloudant.Account()
     db = account.database('test')
     same_db = account['test']
     assert db.uri == same_db.uri
@@ -167,7 +168,7 @@ automagically. As a rule, any endpoint like ``_METHOD`` is in
 Cloudant-Python as ``Object.METHOD``. For example:
 
 -  ``https://garbados.cloudant.com/_all_dbs`` ->
-   ``Account('garbados').all_dbs``
+   ``Account('garbados').all_dbs()``
 -  ``http://localhost:5984/DB/_all_docs`` ->
    ``Account().database(DB).all_docs()``
 -  ``http://localhost:5984/DB/_design/DOC/_view/INDEX`` ->

@@ -74,7 +74,8 @@ Cloudant and CouchDB expose REST APIs that map easily into native Python objects
 ```python
 import cloudant
 
-account = cloudant.Account('garbados')
+# connect to http://localhost:5984
+account = cloudant.Account()
 db = account.database('test')
 same_db = account['test']
 assert db.uri == same_db.uri

@@ -12,6 +12,7 @@ class Account(Resource):
     """
     An account to a Cloudant or CouchDB account.
 
+        # connects to http://localhost:5984
         account = cloudant.Account()
         response = account.login(USERNAME, PASSWORD)
         print response.json()
