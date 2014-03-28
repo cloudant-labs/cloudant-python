@@ -13,6 +13,7 @@ class Account(Resource):
     An account to a Cloudant or CouchDB account.
 
         # connects to http://localhost:5984
+        # if a string is passed, connects to %s.cloudant.com
         account = cloudant.Account()
         response = account.login(USERNAME, PASSWORD)
         print response.json()
