@@ -42,6 +42,26 @@ class Database(Resource):
             response = response.result()
         response.raise_for_status()
 
+    def __delitem__(self, name):
+        """
+        Shortcut to synchronously deleting the document from the database.
+        For example:
+
+            del db['docKey']
+        """
+        doc = self.document(name)
+        response = doc.get()
+        # block until result if the object is using async/is a future
+        if hasattr(response, 'result'):
+            response = response.result()
+        response.raise_for_status()
+        rev = response.json()['_rev']
+        deletion = doc.delete(rev)
+        # block until result if the object is using async/is a future
+        if hasattr(deletion, 'result'):
+            deletion = deletion.result()
+        deletion.raise_for_status()
+
     def all_docs(self, **kwargs):
         """
         Return an `Index` object referencing all documents in the database.

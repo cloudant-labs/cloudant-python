@@ -249,7 +249,8 @@ class DocumentTest(ResourceTest):
         assert self.doc.put(params=self.test_doc).status_code == 201
         resp = self.doc.get()
         assert resp.status_code == 200
-        del self.doc
+        del self.db[self.doc_name]
+        assert self.doc.get().status_code == 404
 
     def testDict(self):
         self.db[self.doc_name] = self.test_doc
