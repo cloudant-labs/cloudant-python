@@ -3,6 +3,7 @@ from collections import defaultdict
 from types import GeneratorType
 import signal
 import time
+import json
 import unittest
 
 
@@ -326,6 +327,24 @@ class IndexTest(ResourceTest):
         view = self.db.all_docs()
         response = view.get(params=dict(reduce=False))
         assert 'reduce=False' not in response.url
+
+    def testMultiKeyViewQuery(self):
+        """
+        Test using multi-key view query (post to view)
+        """
+        view = self.db.all_docs()
+        d = [self.doc_name, self.otherdoc_name]
+        response = view.post(params=dict(reduce=False),
+                             data=json.dumps(dict(keys=d)))
+        assert 'reduce=false' in response.url
+        assert response.status_code == 200
+        key_return = response.json()['rows']
+        assert len(key_return) == len(d)
+
+        # The documents weren't in there, so make sure they are not found
+        for adoc in key_return:
+            assert adoc["key"] in d
+            assert "error" in adoc
 
     def tearDown(self):
         assert self.db.delete().status_code == 200
