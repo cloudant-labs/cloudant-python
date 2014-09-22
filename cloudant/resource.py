@@ -88,7 +88,7 @@ class Resource(object):
 
         # normalize `params` kwarg according to method
         if 'params' in opts:
-            if method in ['post', 'put']:
+            if method in ['post', 'put'] and 'data' not in opts:
                 opts['data'] = json.dumps(opts['params'])
                 del opts['params']
             else:
