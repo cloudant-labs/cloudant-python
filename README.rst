@@ -3,7 +3,7 @@ Cloudant-Python
 
 |Build Status| |Coverage Status| |PyPi version| |PyPi downloads|
 
-An effortless Cloudant / CouchDB interface for Python.
+An effortless Cloudant / CouchDB interface for Python 2.7 and 3.2+.
 
 Install
 -------
