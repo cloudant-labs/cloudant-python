@@ -9,7 +9,11 @@
 [requests]: http://www.python-requests.org/en/latest/
 [responses]: http://www.python-requests.org/en/latest/api/#requests.Response
 
-An effortless Cloudant / CouchDB interface for Python.
+## This Library is Deprecated
+
+As of 13 October 2015, this library is deprecated in favor of [a completely rewritten Python library for 
+interfacing with Cloudant and CouchDB servers](https://github.com/cloudant/python-cloudant). 
+
 
 ## Install
 
