@@ -15,7 +15,7 @@ This is the final version of this branch -- 0.5.10.
 Please use the new library for your new projects and begin to migrate your old projects that have 
 used versions 0.5.10 and prior. 
 
-We will keep 0.5.10 as the latest stable version on PyPI until at least early 2016, at which time 
+We will keep 0.5.10 as the latest stable version on PyPI until early 2016, at which time 
 we plan to switch over completely to 2.0.0. 
 
 Alpha and Beta versions starting with 2.0.0a1 will be uploaded to PyPI. The latest alpha 

@@ -9,10 +9,29 @@
 [requests]: http://www.python-requests.org/en/latest/
 [responses]: http://www.python-requests.org/en/latest/api/#requests.Response
 
-## This Library is Deprecated
+## This Version is Deprecated
 
-As of 13 October 2015, this library is deprecated in favor of [a completely rewritten Python library for 
-interfacing with Cloudant and CouchDB servers](https://github.com/cloudant/python-cloudant). 
+As of 13 October 2015, this development branch is deprecated in favor of [the new 
+development branch starting at version 2.0.0a1](https://github.com/cloudant/python-cloudant). 
+
+**The new version will introduce breaking changes. No attempt was made to follow the 
+API in 0.5.10.**
+
+This is the final version of this branch -- 0.5.10. 
+
+Please use the new library for your new projects and begin to migrate your old projects that have 
+used versions 0.5.10 and prior. 
+
+We will keep 0.5.10 as the latest stable version on PyPI until early 2016, at which time 
+we plan to switch over completely to 2.0.0. 
+
+Alpha and Beta versions starting with 2.0.0a1 will be uploaded to PyPI. The latest alpha 
+or beta release may be installed by 
+
+    pip install --pre cloudant
+
+Note that our new development branch is still pre 2.0.0. As such, we cannot make any guarantees, though 
+we will try, of course, not to introduce new API that will later be removed.
 
 
 ## Install
