@@ -25,7 +25,7 @@ or beta release may be installed by
 
     pip install --pre cloudant
 
-Note that our new development branch is still in alpha. As such, we cannot make any guarantees, though 
+Note that our new development branch is still pre 2.0.0. As such, we cannot make any guarantees, though 
 we will try, of course, not to introduce new API that will later be removed.
 
 |Build Status| |Coverage Status| |PyPi version| |PyPi downloads|
