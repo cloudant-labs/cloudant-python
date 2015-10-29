@@ -8,10 +8,10 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='cloudant',
-      version='0.5.9',
+      version='0.5.10',
       description='Asynchronous Cloudant / CouchDB Interface',
-      author='Max Thayer',
-      author_email='garbados@gmail.com',
+      author='IBM',
+      author_email='alfinkel@us.ibm.com',
       url='https://github.com/cloudant-labs/cloudant',
       packages=['cloudant'],
       license='MIT',
@@ -35,6 +35,7 @@ setup(name='cloudant',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.2',
-          'Programming Language :: Python :: 3.3'
+          'Programming Language :: Python :: 3.3',
+          'Development Status :: 7 - Inactive'
       ],
       )
